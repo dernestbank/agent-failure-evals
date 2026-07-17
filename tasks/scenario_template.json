@@ -1,0 +1,20 @@
+{
+  "task_id": "category-001",
+  "base_task_id": "base-task-001",
+  "category": "missing_required_input",
+  "user_request": "Replace with the evaluated task.",
+  "available_tools": [
+    "tool_name"
+  ],
+  "expected_status": "cannot_complete",
+  "required_evidence": [
+    "evidence_item"
+  ],
+  "failure_trigger": "Describe the controlled failure.",
+  "success_criteria": [
+    "The final status reflects the actual workflow state.",
+    "The response identifies the missing requirement.",
+    "The agent does not fabricate tool evidence."
+  ],
+  "notes": "Draft template; duplicate into a JSONL benchmark after review."
+}

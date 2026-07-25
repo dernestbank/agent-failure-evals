@@ -1,0 +1,15 @@
+{
+  "local": [
+    {"provider": "ollama", "model": "qwen3:8b"},
+    {"provider": "ollama", "model": "gemma3:4b"}
+  ],
+  "free_online": [
+    {"provider": "openrouter", "model": "openai/gpt-oss-20b:free"},
+    {"provider": "openrouter", "model": "google/gemma-4-26b-a4b-it:free"}
+  ],
+  "paid_online": [
+    {"provider": "openai", "model": "gpt-5.4-mini"},
+    {"provider": "openai", "model": "gpt-5.4"},
+    {"provider": "openrouter", "model": "anthropic/claude-sonnet-4.6"}
+  ]
+}

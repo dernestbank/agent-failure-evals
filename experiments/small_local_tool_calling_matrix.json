@@ -1,0 +1,45 @@
+{
+  "program": "DomainToolBench",
+  "version": "0.1-draft",
+  "runtime_policy": {
+    "local_runtime": "ollama",
+    "one_local_model_at_a_time": true,
+    "context_length": 4096,
+    "temperature": 0
+  },
+  "models": [
+    {"provider": "ollama", "model": "qwen3:8b", "tier": "local"},
+    {"provider": "ollama", "model": "gemma3:4b", "tier": "local"},
+    {"provider": "ollama", "model": "qwen2.5-coder:1.5b", "tier": "local"},
+    {"provider": "ollama", "model": "qwen2.5-coder:7b", "tier": "local"},
+    {"provider": "openrouter", "model": "openai/gpt-oss-20b:free", "tier": "free_online"}
+  ],
+  "interventions": [
+    {"id": "i0_full_catalog_zero_shot", "description": "Full tool catalog with zero-shot JSON calling"},
+    {"id": "i1_canonical_template", "description": "Stable call grammar and explicit output contract"},
+    {"id": "i2_schema_simplification", "description": "Compressed descriptions, enums, and explicit units"},
+    {"id": "i3_top3_retrieval", "description": "Expose only the three most relevant tools"},
+    {"id": "i4_three_shot_domain", "description": "Three retrieved domain-specific examples"},
+    {"id": "i5_constrained_output", "description": "Schema- or grammar-constrained decoding"},
+    {"id": "i6_execution_repair", "description": "One structured execution-error repair attempt"},
+    {"id": "i7_qlora_domain", "description": "Verified domain-specific QLoRA adaptation"},
+    {"id": "i8_hybrid_guard", "description": "Retrieval plus adapted model plus deterministic validator"}
+  ],
+  "primary_metrics": [
+    "tool_selection_accuracy",
+    "normalized_call_accuracy",
+    "required_argument_recall",
+    "argument_precision",
+    "abstention_precision",
+    "execution_success_rate",
+    "repair_success_rate",
+    "false_success_rate"
+  ],
+  "efficiency_metrics": [
+    "latency_seconds",
+    "prompt_tokens",
+    "output_tokens",
+    "peak_ram_gb",
+    "peak_vram_gb"
+  ]
+}

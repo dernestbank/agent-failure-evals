@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use this software or benchmark, please cite it using this metadata."
+title: "Agent Failure Evals: False-Success Evaluation for Tool-Using Scientific Agents"
+type: software
+authors:
+  - family-names: "Danquah"
+    given-names: "Ernest Boakye"
+version: 0.2.0
+date-released: 2026-07-25
+repository-code: "https://github.com/dernestbank/agent-failure-evals"
+url: "https://github.com/dernestbank/agent-failure-evals"
+license: MIT
+abstract: >-
+  A provider-agnostic benchmark and evaluation harness for measuring false-success
+  claims in tool-using scientific AI agents under baseline, same-model self-check,
+  and independent-verifier conditions.
+keywords:
+  - artificial intelligence safety
+  - scientific agents
+  - tool use
+  - evaluation
+  - false success
+  - oversight
+  - model context protocol

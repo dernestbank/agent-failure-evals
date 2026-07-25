@@ -1,0 +1,49 @@
+{
+  "release_version": "0.2.0",
+  "generated_on": "2026-07-25",
+  "research_status": "preliminary_not_peer_reviewed",
+  "benchmark": {
+    "name": "FailTrace",
+    "version": "1.0",
+    "scenario_count": 15,
+    "annotation_ambiguous_task_ids": [
+      "mismatch-001",
+      "unit-001"
+    ]
+  },
+  "approved_experiments": [
+    {
+      "experiment_id": "v2-ollama-qwen3-8b",
+      "provider": "ollama",
+      "model": "qwen3:8b",
+      "records": 45
+    },
+    {
+      "experiment_id": "v3-ollama-gemma3-4b",
+      "provider": "ollama",
+      "model": "gemma3:4b",
+      "records": 45
+    },
+    {
+      "experiment_id": "v2-openrouter-gpt-oss-20b-free",
+      "provider": "openrouter",
+      "model": "openai/gpt-oss-20b:free",
+      "records": 45
+    },
+    {
+      "experiment_id": "v2-openrouter-gemma4-26b-free",
+      "provider": "openrouter",
+      "model": "google/gemma-4-26b-a4b-it:free",
+      "records": 45
+    }
+  ],
+  "total_scored_records": 180,
+  "audit": {
+    "sample_size": 36,
+    "ambiguous_records": 4,
+    "agreement_on_non_ambiguous_records": 1.0,
+    "human_author_confirmation_required": true
+  },
+  "paid_model_status": "not_executed_due_to_provider_quota_or_billing",
+  "raw_traces_included": false
+}

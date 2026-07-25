@@ -27,7 +27,12 @@ class StructuredClient(ABC):
     model: str
 
     @abstractmethod
-    def generate(self, messages: list[dict[str, str]], max_tokens: int = 700) -> ModelResponse: ...
+    def generate(
+        self,
+        messages: list[dict[str, str]],
+        max_tokens: int = 700,
+        response_schema: dict[str, Any] | None = None,
+    ) -> ModelResponse: ...
 
 
 def parse_json_object(text: str) -> dict[str, Any]:

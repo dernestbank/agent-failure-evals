@@ -122,6 +122,86 @@ The harness required support for:
 
 Structured-output mode alone did not guarantee valid or complete structured responses.
 
+## DomainToolBench: small local model tool calling
+
+The repository now includes a second research program focused on improving domain-specific tool calling in small local models.
+
+### Seed benchmark
+
+`tasks/domain_tool_calling_seed_v0.jsonl` contains 15 provisional tasks across:
+
+- Life-cycle assessment
+- Green-hydrogen techno-economic analysis
+- Process simulation
+- Cross-domain routing
+- Clarification and abstention
+- Single and multi-tool sequences
+
+The schemas are normalized research interfaces, not yet the versioned live SDAI MCP manifests.
+
+### Approved curated-catalog baselines
+
+| Tier | Model | Completion | Exact calls | Tool selection | Safe no-call | False calls | Latency |
+|---|---|---:|---:|---:|---:|---:|---:|
+| Local | `qwen3:8b` | 100% | 100% | 100% | 100% | 0% | 2.35s |
+| Local | `qwen2.5-coder:7b` | 100% | 100% | 100% | 100% | 0% | 9.31s |
+| Local | `gemma3:4b` | 100% | 66.7% | 73.3% | 0% | 26.7% | 2.53s |
+| Local | `llama3.2:latest` | 100% | 73.3% | 80.0% | 50% | 13.3% | 14.56s |
+| Local | `qwen2.5-coder:1.5b` | 100% | 20.0% | 57.8% | 0% | 26.7% | 5.07s |
+| Free online | `google/gemma-4-26b-a4b-it:free` | 100% | 86.7% | 91.1% | 75% | 6.7% | 3.75s |
+| Free online | `openai/gpt-oss-20b:free` | 80% | 91.7%* | 100%* | 100%* | 0%* | 19.10s* |
+
+`*` GPT-OSS accuracy metrics apply to 12 scored tasks. Three tasks returned no visible structured content and count against completion reliability.
+
+These are single-run provisional seed results, not estimates of general model capability.
+
+### Catalog and retrieval ablation
+
+Exposing all 13 tools reduced exact-call accuracy for every tested local model:
+
+- Qwen 3 8B: 100% curated to 80% full catalog
+- Gemma 3 4B: 66.7% curated to 40% full catalog
+- Qwen Coder 1.5B: 20% curated to 6.7% full catalog
+
+Automatic top-3 retrieval with local `mxbai-embed-large` achieved 95.5% expected-tool recall. It recovered part of the full-catalog loss for weaker models but did not restore curated-catalog performance or improve their abstention policy.
+
+See:
+
+- `report/domain_toolbench_technical_report_v0_1.md`
+- `report/white_paper_local_scientific_agents.md`
+- `report/engineering_note_structured_outputs.md`
+- `docs/small_local_model_tool_calling_program.md`
+- `docs/local_tool_calling_training_curriculum.md`
+- `results/public/domain_tool_calling_baselines.md`
+- `results/public/domain_retrieval_ablation.md`
+
+### Run DomainToolBench
+
+```powershell
+agent-evals validate-tool-benchmark
+agent-evals run-tool-benchmark ollama qwen3:8b --experiment-id my-domain-run
+```
+
+Full-catalog condition:
+
+```powershell
+python scripts\build_full_catalog_benchmark.py
+agent-evals run-tool-benchmark ollama qwen3:8b `
+  --experiment-id my-full-run `
+  --benchmark-path tasks\domain_tool_calling_full_catalog_v0.jsonl `
+  --condition full_catalog_zero_shot
+```
+
+Top-3 embedding retrieval:
+
+```powershell
+python scripts\build_embedding_retrieval_benchmark.py
+agent-evals run-tool-benchmark ollama qwen3:8b `
+  --experiment-id my-top3-run `
+  --benchmark-path tasks\domain_tool_calling_top3_mxbai_v0.jsonl `
+  --condition top3_embedding_zero_shot
+```
+
 ## Installation
 
 ```powershell

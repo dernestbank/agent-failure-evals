@@ -1,0 +1,8 @@
+tier,experiment_id,provider,model,condition,infrastructure_failures,completion_reliability,n,behavior_accuracy,sequence_exact_accuracy,tool_selection_accuracy,required_argument_recall,argument_precision,false_tool_call_rate,safe_no_call_accuracy,mean_latency_seconds,mean_output_tokens
+local,domain-v0.1-qwen3-8b,ollama,qwen3:8b,canonical_zero_shot,0,1.0,15,0.9333333333333333,1.0,1.0,1.0,1.0,0.0,1.0,2.3482162533331574,52.86666666666667
+local,domain-v0.1-gemma3-4b,ollama,gemma3:4b,canonical_zero_shot,0,1.0,15,0.7333333333333333,0.6666666666666666,0.7333333333333333,1.0,0.6888888888888889,0.26666666666666666,0.0,2.534495386666822,58.46666666666667
+local,domain-v0.1-qwen25-coder-1.5b,ollama,qwen2.5-coder:1.5b,canonical_zero_shot,0,1.0,15,0.2,0.2,0.5777777777777777,0.8333333333333334,0.43444444444444447,0.26666666666666666,0.0,5.073684473333197,103.13333333333334
+local,domain-v0.1-qwen25-coder-7b,ollama,qwen2.5-coder:7b,canonical_zero_shot,0,1.0,15,0.9333333333333333,1.0,1.0,1.0,1.0,0.0,1.0,9.305508086666789,68.06666666666666
+local,domain-v0.1-llama32,ollama,llama3.2:latest,canonical_zero_shot,0,1.0,15,0.5333333333333333,0.7333333333333333,0.8,0.9111111111111111,0.8,0.13333333333333333,0.5,14.5634981066664,55.733333333333334
+free_online,domain-v0.1-gpt-oss-20b-free,openrouter,openai/gpt-oss-20b:free,canonical_zero_shot,3,0.8,12,1.0,0.9166666666666666,1.0,1.0,0.9722222222222222,0.0,1.0,19.102715466666268,303.25
+free_online,domain-v0.1-gemma4-26b-free,openrouter,google/gemma-4-26b-a4b-it:free,canonical_zero_shot,0,1.0,15,0.8666666666666667,0.8666666666666667,0.9111111111111111,0.9666666666666667,0.9333333333333333,0.06666666666666667,0.75,3.7465402266664265,50.333333333333336

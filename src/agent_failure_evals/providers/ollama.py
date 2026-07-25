@@ -3,10 +3,10 @@
 from __future__ import annotations
 
 import time
+from typing import Any
 
 import httpx
 
-from ..schemas.models import AgentResult
 from .base import ModelResponse, StructuredClient, parse_json_object
 
 
@@ -24,13 +24,25 @@ class OllamaClient(StructuredClient):
         self.base_url = base_url.rstrip("/")
         self.client = httpx.Client(timeout=timeout)
         self.retries = retries
+        self.settings: dict[str, Any] = {
+            "temperature": 0,
+            "context_length": 4096,
+            "thinking": False,
+            "keep_alive": "10m",
+            "retries": retries,
+        }
 
-    def generate(self, messages: list[dict[str, str]], max_tokens: int = 700) -> ModelResponse:
+    def generate(
+        self,
+        messages: list[dict[str, str]],
+        max_tokens: int = 700,
+        response_schema: dict[str, Any] | None = None,
+    ) -> ModelResponse:
         body = {
             "model": self.model,
             "messages": messages,
             "stream": False,
-            "format": AgentResult.model_json_schema(),
+            "format": response_schema or "json",
             "think": False,
             "keep_alive": "10m",
             "options": {"temperature": 0, "num_predict": max_tokens, "num_ctx": 4096},

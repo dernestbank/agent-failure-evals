@@ -61,6 +61,7 @@ def run_model(
         "experiment_id": eid,
         "provider": client.provider,
         "model": client.model,
+        "provider_settings": getattr(client, "settings", {}),
         "benchmark": str(benchmark_path),
         "scenario_count": len(scenarios),
         "started_at": datetime.now(UTC).isoformat(),

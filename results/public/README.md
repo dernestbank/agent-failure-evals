@@ -11,6 +11,10 @@ This directory contains sanitized aggregate outputs from the approved v0.2.0 exp
 - `sensitivity_excluding_ambiguous.md` — readable sensitivity table
 - `manual_audit_summary.md` — preliminary audit counts and ambiguity finding
 - `manifest.json` — approved experiment IDs and release metadata
+- `domain_tool_calling_baselines.csv` / `.md` — curated-catalog DomainToolBench model baselines
+- `domain_catalog_ablation.csv` / `.md` — curated versus full-catalog comparison
+- `domain_tool_retrieval_top3.csv` / `.md` — automatic top-3 retrieval diagnostics
+- `domain_retrieval_ablation.csv` / `.md` — curated, full-catalog, and top-3 model comparison
 
 ## Excluded
 
@@ -28,6 +32,8 @@ Raw traces remain ignored in the working repository until Ernest Boakye Danquah 
 
 ## Interpretation
 
-The frozen v1 matrix includes all 15 scenarios. The sensitivity analysis excludes two scenarios identified post hoc as annotation-ambiguous. Both result layers must be reported together.
+The frozen FailTrace v1 matrix includes all 15 scenarios. The sensitivity analysis excludes two scenarios identified post hoc as annotation-ambiguous. Both result layers must be reported together.
 
-The results are preliminary, not peer reviewed, and apply only to the tested prompts, model identifiers, providers, and controlled mock traces.
+DomainToolBench results use a separate 15-task seed with provisional normalized scientific tool schemas. Curated-catalog, full-catalog, and top-3 retrieval results must not be mixed without naming the catalog condition. GPT-OSS accuracy metrics apply only to 12 scored records because three tasks returned no visible structured content.
+
+All results are preliminary, not peer reviewed, and apply only to the tested prompts, model identifiers, providers, catalog conditions, and controlled tasks.

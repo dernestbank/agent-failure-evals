@@ -48,15 +48,16 @@
 ## Release blockers
 
 - [ ] Ernest confirms the 36-record preliminary audit
-- [ ] Run complete test suite after final edits
-- [ ] Run code formatting and static checks
-- [ ] Run secrets scan
-- [ ] Confirm no `.env` or API keys are tracked
-- [ ] Add sanitized aggregate result files to Git
-- [ ] Add benchmark card
-- [ ] Add citation metadata and changelog
-- [ ] Commit provider-matrix branch
-- [ ] Push branch to GitHub
+- [x] Run complete test suite after v0.2.0 edits
+- [x] Run code formatting and static checks
+- [x] Run secrets scan
+- [x] Confirm no `.env` or API keys are tracked
+- [x] Add sanitized aggregate result files to Git
+- [x] Add benchmark card
+- [x] Add citation metadata and changelog
+- [x] Commit provider-matrix branch
+- [x] Push branch to GitHub
+- [ ] Commit and push DomainToolBench baseline/retrieval milestone
 - [ ] Review GitHub rendering and links
 - [ ] Tag v0.2.0 only after human confirmation
 
@@ -111,17 +112,25 @@
 
 ### Baseline and intervention experiments
 
-- [ ] Baseline `qwen3:8b`
-- [ ] Baseline `gemma3:4b`
-- [ ] Baseline `qwen2.5-coder:1.5b`
-- [ ] Baseline `qwen2.5-coder:7b`
-- [ ] Compare full catalog and top-k retrieval
+- [x] Baseline `qwen3:8b`
+- [x] Baseline `gemma3:4b`
+- [x] Baseline `qwen2.5-coder:1.5b`
+- [x] Baseline `qwen2.5-coder:7b`
+- [x] Baseline `llama3.2:latest`
+- [x] Run free hosted GPT-OSS and Gemma 4 comparisons
+- [x] Compare curated and full catalogs
+- [x] Build local top-3 embedding retriever
+- [x] Compare full catalog and top-3 retrieval
+- [ ] Add no-tool retrieval threshold
+- [ ] Add multi-tool coverage-aware retrieval
+- [ ] Add two-stage behavior router
 - [ ] Compare zero-shot and retrieved few-shot examples
 - [ ] Compare verbose and simplified schemas
-- [ ] Add constrained-decoding condition
+- [x] Add schema-constrained output condition
 - [ ] Add structured execution feedback and bounded repair
-- [ ] Measure structural validity separately from semantic accuracy
-- [ ] Measure peak RAM, VRAM, and latency
+- [x] Measure structural validity separately from semantic accuracy
+- [x] Measure model and condition latency
+- [ ] Measure peak RAM, VRAM, and energy
 
 ### Domain adaptation
 
@@ -139,8 +148,9 @@
 - [ ] FailTrace v1 benchmark card
 - [ ] Auditable Scientific AI Agents white paper
 - [x] Local Scientific Agents white paper draft
-- [ ] DomainToolBench technical report
-- [ ] Structured Outputs Are Not Enough engineering note
+- [x] DomainToolBench technical report draft
+- [x] Structured Outputs Are Not Enough engineering note draft
+- [x] Local tool-calling training curriculum
 - [ ] SDAI Labs research landing page
 - [ ] PDF export and downloadable report
 - [ ] DOI-backed repository archive

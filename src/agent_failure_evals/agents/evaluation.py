@@ -69,7 +69,10 @@ def _request(
     last = None
     for i in range(attempts):
         try:
-            r = client.generate(current)
+            r = client.generate(
+                current,
+                response_schema=AgentResult.model_json_schema(),
+            )
             latency += r.latency_seconds
             inp += r.input_tokens
             out += r.output_tokens

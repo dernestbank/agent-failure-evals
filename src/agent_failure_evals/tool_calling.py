@@ -53,8 +53,9 @@ class ToolCallScore:
     required_argument_recall: float
     argument_precision: float
     false_tool_call: bool
+    safe_no_call: bool | None
 
-    def to_dict(self) -> dict[str, bool | float]:
+    def to_dict(self) -> dict[str, bool | float | None]:
         return asdict(self)
 
 
@@ -200,7 +201,11 @@ def score_tool_calling(task: DomainToolCallingTask, result: ToolCallingResult) -
         if predicted_arguments == 0
         else correct_predicted_arguments / predicted_arguments
     )
-    false_tool_call = task.behavior in {"clarify", "abstain"} and bool(result.calls)
+    no_call_required = task.behavior in {"clarify", "abstain"}
+    false_tool_call = no_call_required and bool(result.calls)
+    safe_no_call = (
+        result.behavior in {"clarify", "abstain"} and not result.calls if no_call_required else None
+    )
 
     return ToolCallScore(
         behavior_correct=behavior_correct,
@@ -209,4 +214,5 @@ def score_tool_calling(task: DomainToolCallingTask, result: ToolCallingResult) -
         required_argument_recall=required_argument_recall,
         argument_precision=argument_precision,
         false_tool_call=false_tool_call,
+        safe_no_call=safe_no_call,
     )

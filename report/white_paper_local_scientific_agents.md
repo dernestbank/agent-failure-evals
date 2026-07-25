@@ -363,7 +363,39 @@ The program expects that no single intervention will solve tool calling. The mos
 
 The key contribution will be an ablation showing which layers provide measurable value and how those gains vary with model size and task complexity.
 
-## 8. Deployment guidance
+## 8. Preliminary seed evidence
+
+A 15-task provisional DomainToolBench seed was evaluated across five local models and two free hosted models. The tools represent normalized LCA, TEA, process-simulation, and cross-domain interfaces; they are not yet the versioned live SDAI MCP manifests.
+
+### Local results
+
+| Model | Behavior | Exact calls | Tool selection | Safe no-call | False calls | Mean latency |
+|---|---:|---:|---:|---:|---:|---:|
+| Qwen 3 8B | 93.3% | 100% | 100% | 100% | 0% | 2.35s |
+| Qwen 2.5 Coder 7B | 93.3% | 100% | 100% | 100% | 0% | 9.31s |
+| Gemma 3 4B | 73.3% | 66.7% | 73.3% | 0% | 26.7% | 2.53s |
+| Llama 3.2 | 53.3% | 73.3% | 80.0% | 50% | 13.3% | 14.56s |
+| Qwen 2.5 Coder 1.5B | 20.0% | 20.0% | 57.8% | 0% | 26.7% | 5.07s |
+
+Qwen 3 8B provided the strongest accuracy–latency combination on the tested workstation. The similarly accurate Qwen 2.5 Coder 7B was approximately four times slower. The 1.5B coder model predicted `multi_call` on every task, showing that a model may produce valid structured output and copy many expected arguments while failing at routing, abstention, and stopping.
+
+### Hosted comparison
+
+Hosted Gemma 4 26B completed all 15 tasks but remained below local Qwen 3 on routing and exact-call accuracy. The free GPT-OSS 20B endpoint scored strongly on 12 tasks but returned no visible structured content on three tasks, yielding 80% completion reliability. Those missing records were retained as failures rather than manually reconstructed.
+
+### Architectural implication
+
+The preliminary evidence supports a hybrid architecture:
+
+- Use a strong local router where bounded performance is sufficient.
+- Treat safe no-call behavior as a first-class requirement.
+- Validate every call deterministically before execution.
+- Measure completion reliability separately from accuracy on surviving outputs.
+- Reserve hosted models as fallback or independent review rather than assuming they are automatically more reliable.
+
+These are seed findings, not deployment guarantees. The benchmark must be expanded, independently annotated, repeated, and connected to live tools before operational use.
+
+## 9. Deployment guidance
 
 A local scientific agent should be deployed only within a bounded and tested scope. Recommended practices include:
 
@@ -378,7 +410,7 @@ A local scientific agent should be deployed only within a bounded and tested sco
 9. Monitor drift when tools or databases change.
 10. Re-evaluate after model, quantization, prompt, or schema updates.
 
-## 9. Proposed SDAI Labs outputs
+## 10. Proposed SDAI Labs outputs
 
 - DomainToolBench dataset and benchmark card
 - ToolSchemaLab for schema and description ablations
@@ -388,7 +420,7 @@ A local scientific agent should be deployed only within a bounded and tested sco
 - MCP Tool-Calling Profile for small local models
 - Public results dashboard
 
-## 10. Limitations and open questions
+## 11. Limitations and open questions
 
 - Synthetic tasks may not represent real scientific workflows.
 - Exact calls can have multiple valid formulations.
@@ -399,7 +431,7 @@ A local scientific agent should be deployed only within a bounded and tested sco
 - Privacy benefits depend on the entire system, not only model location.
 - Human review remains necessary for consequential scientific decisions.
 
-## 11. Conclusion
+## 12. Conclusion
 
 Small local models are promising scientific tool users when their task is bounded and their outputs are embedded in a layered software system. The model should not be expected to carry all responsibility for routing, syntax, scientific validity, execution, and oversight.
 

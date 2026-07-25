@@ -4,12 +4,53 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Added
+
+- DomainToolBench zero-shot experiment runner and analysis pipeline
+- Request-specific structured-output schemas across Ollama, OpenAI, and OpenRouter adapters
+- Fifteen-task provisional scientific tool-calling seed benchmark
+- Full 13-tool catalog benchmark variant
+- Local top-3 embedding retrieval with `mxbai-embed-large`
+- Safe no-call accuracy and completion-reliability metrics
+- Seven curated-catalog model baselines
+- Catalog-size and retrieval ablation reports
+- DomainToolBench Technical Report v0.1
+- Local Scientific Agents white-paper results section
+- Structured Outputs Are Not Enough engineering note
+- Local tool-calling fine-tuning curriculum
+- Surgical DomainToolBench task-repair utility and repair log
+
+### Results
+
+- Qwen 3 8B achieved 100% exact calls and 100% safe no-call accuracy on the curated 15-task seed
+- Qwen 2.5 Coder 7B matched exact-call accuracy but was approximately four times slower
+- Qwen 2.5 Coder 1.5B collapsed to `multi_call` on all curated tasks
+- Full-catalog exposure reduced exact-call accuracy for all three tested local models
+- Top-3 retrieval achieved 95.5% expected-tool recall and partially recovered weaker-model performance
+- Free GPT-OSS completed only 12 of 15 tasks because three requests returned no visible structured content
+
+### Changed
+
+- Provider clients now accept a request-specific response schema
+- Tool-calling metrics separate exact behavior from safe no-call behavior
+- OpenRouter GPT-OSS requests use minimal hidden reasoning where supported
+- Domain benchmark annotation corrected one multi-call label and added canonical enum values
+
+### Fixed
+
+- Cross-experiment schema coupling that forced DomainToolBench outputs into the FailTrace schema
+- Valid-alternative sequence scoring with repeated tool names
+- Provider-specific structured error objects and wrapped response objects
+- Retrieval and catalog metadata recording in experiment manifests
+
 ### Planned
 
+- Two-stage behavior router
+- No-tool retrieval threshold and multi-tool-aware retrieval
 - Deterministic EvidenceGuard condition
 - Benchmark v1.1 annotation clarifications
 - Repeated-trial and temperature stability study
-- Cross-model verifier experiments
+- QLoRA behavior adapter for Qwen Coder 1.5B
 - Live openLCA-MCP benchmark
 
 ## [0.2.0] — 2026-07-25

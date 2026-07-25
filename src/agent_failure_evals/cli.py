@@ -14,9 +14,13 @@ from .benchmark import load_scenarios, summary
 from .experiment import run_model
 from .providers import OllamaClient, openai_client, openrouter_client
 from .providers.base import StructuredClient
+from .tool_calling import load_tool_calling_tasks
+from .tool_calling_analysis import analyze_tool_calling_run
+from .tool_calling_experiment import run_tool_calling_model
 
 app = typer.Typer(no_args_is_help=True, add_completion=False)
 BENCH = Path("tasks/benchmark_v1.jsonl")
+TOOL_BENCH = Path("tasks/domain_tool_calling_seed_v0.jsonl")
 RAW = Path("results/raw")
 
 
@@ -85,6 +89,47 @@ def run_tier(
         except Exception as exc:  # noqa: BLE001 - isolate failures in batch tiers
             print(f"[red]failed[/red] {item['provider']}/{item['model']}: {exc}")
     print(combine())
+
+
+@app.command("validate-tool-benchmark")
+def validate_tool_benchmark(path: Path = TOOL_BENCH) -> None:
+    tasks = load_tool_calling_tasks(path)
+    print(
+        {
+            "count": len(tasks),
+            "domains": sorted({task.domain for task in tasks}),
+            "behaviors": sorted({task.behavior for task in tasks}),
+            "provisional_schemas": all(task.provisional_schema for task in tasks),
+        }
+    )
+
+
+@app.command("run-tool-benchmark")
+def run_tool_benchmark(
+    provider: str,
+    model: str,
+    limit: int | None = None,
+    experiment_id: str | None = None,
+    benchmark_path: Path = TOOL_BENCH,
+    condition: str = "curated_catalog_zero_shot",
+) -> None:
+    load_dotenv()
+    client = client_for(provider, model)
+    output_dir = run_tool_calling_model(
+        client=client,
+        benchmark_path=benchmark_path,
+        output_root=RAW,
+        experiment_id=experiment_id,
+        limit=limit,
+        condition=condition,
+    )
+    summary_path = analyze_tool_calling_run(output_dir)
+    print({"experiment": str(output_dir), "summary": str(summary_path)})
+
+
+@app.command("analyze-tool-run")
+def analyze_tool_run(experiment_dir: Path) -> None:
+    print(analyze_tool_calling_run(experiment_dir))
 
 
 @app.command()

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 import time
+from typing import Any
 
 import httpx
 
@@ -30,15 +31,42 @@ class OpenAICompatibleClient(StructuredClient):
         headers = {"Authorization": f"Bearer {key}", "Content-Type": "application/json"}
         headers.update(extra_headers or {})
         self.client = httpx.Client(timeout=timeout, headers=headers)
+        self.reasoning_config = (
+            {"effort": "minimal", "exclude": True} if "gpt-oss" in model else None
+        )
+        self.settings: dict[str, Any] = {
+            "temperature": 0,
+            "reasoning": self.reasoning_config,
+            "structured_output": "json_schema_with_json_object_fallback",
+        }
 
-    def generate(self, messages: list[dict[str, str]], max_tokens: int = 700) -> ModelResponse:
+    def generate(
+        self,
+        messages: list[dict[str, str]],
+        max_tokens: int = 700,
+        response_schema: dict[str, Any] | None = None,
+    ) -> ModelResponse:
+        response_format: dict[str, Any]
+        if response_schema is None:
+            response_format = {"type": "json_object"}
+        else:
+            response_format = {
+                "type": "json_schema",
+                "json_schema": {
+                    "name": "structured_response",
+                    "strict": True,
+                    "schema": response_schema,
+                },
+            }
         body = {
             "model": self.model,
             "messages": messages,
             "temperature": 0,
             "max_tokens": max_tokens,
-            "response_format": {"type": "json_object"},
+            "response_format": response_format,
         }
+        if self.reasoning_config is not None:
+            body["reasoning"] = self.reasoning_config
         last = None
         for attempt in range(4):
             response, latency = timed_call(
@@ -46,7 +74,7 @@ class OpenAICompatibleClient(StructuredClient):
             )
             last = response
             if response.status_code >= 400 and "response_format" in response.text:
-                body.pop("response_format", None)
+                body["response_format"] = {"type": "json_object"}
                 response, latency = timed_call(
                     lambda: self.client.post(f"{self.base_url}/chat/completions", json=body)
                 )

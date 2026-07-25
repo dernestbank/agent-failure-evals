@@ -1,0 +1,16 @@
+task_id,domain,expected_behavior,expected_tools,selected_tools,retrieval_recall,top1_tool,top1_score
+lca-discovery-001,lca,call,search_entities,search_entities;create_product_system;check_mass_balance,1.0,search_entities,0.6161855457036076
+lca-method-001,lca,call,search_entities,get_impact_result;calculate_impacts;search_entities,1.0,get_impact_result,0.6928633308333915
+lca-calc-001,lca,call,calculate_impacts,calculate_impacts;get_impact_result;get_contributions,1.0,calculate_impacts,0.8222361577399449
+lca-calc-missing-001,lca,clarify,,calculate_impacts;get_contributions;get_impact_result,,calculate_impacts,0.7591847877898669
+lca-contribution-001,lca,call,get_contributions,get_contributions;get_impact_result;search_entities,1.0,get_contributions,0.6931615579446877
+lca-abstain-001,lca,abstain,,get_tea_result;check_mass_balance;get_impact_result,,get_tea_result,0.5906277064752549
+tea-run-001,tea,call,run_tea_scenario,run_tea_scenario;get_tea_result;set_tea_parameter,1.0,run_tea_scenario,0.7532544264979321
+tea-unit-001,tea,call,set_tea_parameter,set_tea_parameter;get_tea_result;run_tea_scenario,1.0,set_tea_parameter,0.629780147001512
+tea-invalid-001,tea,clarify,,run_tea_scenario;get_tea_result;set_tea_parameter,,run_tea_scenario,0.648430527404582
+tea-sequence-001,tea,multi_call,compare_tea_scenarios;run_tea_scenario,get_tea_result;run_tea_scenario;set_tea_parameter,0.5,get_tea_result,0.6879449874612361
+bioflow-feed-001,process_simulation,call,set_stream_composition,set_stream_composition;check_mass_balance;set_tea_parameter,1.0,set_stream_composition,0.6472312883059935
+bioflow-run-001,process_simulation,call,run_flowsheet,run_flowsheet;check_mass_balance;get_tea_result,1.0,run_flowsheet,0.6818886213228607
+bioflow-sequence-001,process_simulation,multi_call,check_mass_balance;run_flowsheet,check_mass_balance;run_flowsheet;get_tea_result,1.0,check_mass_balance,0.7923865517409633
+bioflow-abstain-001,process_simulation,abstain,,get_tea_result;create_product_system;run_tea_scenario,,get_tea_result,0.4851350127828085
+cross-domain-router-001,cross_domain,multi_call,get_impact_result;get_tea_result,get_tea_result;get_impact_result;get_contributions,1.0,get_tea_result,0.6513095703467768

@@ -59,6 +59,7 @@
 - [x] Push branch to GitHub
 - [x] Commit and push DomainToolBench baseline/retrieval milestone
 - [x] Commit and push behavior-router milestone (`083e602`)
+- [ ] Commit and push binary-gate stability milestone
 - [ ] Review GitHub rendering and links
 - [ ] Tag v0.2.0 only after human confirmation
 
@@ -127,8 +128,13 @@
 - [x] Add two-stage behavior router
 - [x] Compare zero-shot and balanced few-shot behavior routing
 - [x] Compare router conditions with the single-stage baseline
+- [x] Add hierarchical binary call gate
+- [x] Run matched three-seed gate stability study
+- [x] Compare binary gate with matched single-stage baseline
 - [ ] Compare verbose and simplified schemas
 - [x] Add schema-constrained output condition
+- [ ] Add deterministic precondition gate for missing fields, units, and identifiers
+- [ ] Combine no-tool retrieval threshold with deterministic preconditions
 - [ ] Add structured execution feedback and bounded repair
 - [x] Measure structural validity separately from semantic accuracy
 - [x] Measure model and condition latency

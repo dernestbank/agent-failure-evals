@@ -389,6 +389,14 @@ A two-stage architecture separated behavior routing from call generation. Withou
 
 These results show that decomposition and demonstrations can move a failure mode rather than remove it. A conservative router may refuse too often; examples may restore action while also restoring unsafe calls. Prompt-level interventions should therefore be evaluated on execution safety, not only classification accuracy.
 
+### Binary call-gate stability
+
+A matched repeated-trial study compared the single-stage caller with a hierarchical binary `call_required` versus `no_call` gate. Three local models were evaluated on an eight-task balanced subset with seeds 101, 202, and 303 at temperature 0.2, yielding 144 scored task runs and no infrastructure failures.
+
+The gate did not produce a monotonic safety gain. Qwen Coder 1.5B opened on every no-call task. Gemma opened on three of four no-call tasks, although it reduced its false-call rate from 50% to 37.5%. Qwen 3's single-stage baseline remained perfect on binary gating and exact calls, while the hierarchical gate introduced a stable unsafe opening on an invalid-input task and reduced exact-call accuracy to 87.5%. Every gate decision was identical across seeds, indicating systematic policy errors rather than sampling noise under the tested settings.
+
+The result reinforces a central design principle: a model-generated gate is another model decision, not a deterministic safety guarantee. Precondition checks, unit and identifier validation, no-tool retrieval thresholds, and post-generation call validation are more suitable for hard safety boundaries.
+
 ### Architectural implication
 
 The preliminary evidence supports a hybrid architecture:

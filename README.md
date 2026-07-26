@@ -175,6 +175,16 @@ A two-stage router first selects `call`, `multi_call`, `clarify`, or `abstain`, 
 
 The result is model-dependent: decomposition and examples can trade conservatism, execution accuracy, and unsafe action rather than improving all dimensions together.
 
+### Binary call-gate stability study
+
+A matched eight-task study compared the single-stage caller with a hierarchical binary gate across three seeds at temperature 0.2.
+
+- Qwen Coder 1.5B: the gate opened on every no-call task and increased latency from 3.53s to 5.49s.
+- Gemma 3 4B: the gate reduced false calls from 50% to 37.5%, but still opened on 75% of no-call tasks and nearly doubled latency.
+- Qwen 3 8B: the single-stage baseline remained perfect; the gate introduced a 25% unsafe-open rate, reduced exact calls to 87.5%, and increased latency.
+
+All gate decisions were identical across seeds, so the observed errors were stable under the tested settings. The study does not support treating a model-generated binary gate as a hard safety boundary.
+
 See:
 
 - `report/domain_toolbench_technical_report_v0_1.md`
@@ -185,6 +195,8 @@ See:
 - `results/public/domain_tool_calling_baselines.md`
 - `results/public/domain_retrieval_ablation.md`
 - `results/public/domain_router_ablation.md`
+- `report/binary_call_gate_stability_note.md`
+- `results/public/domain_gate_stability.md`
 
 ### Run DomainToolBench
 
@@ -224,6 +236,19 @@ agent-evals run-tool-router ollama qwen3:8b `
   --few-shot
 
 python scripts\build_router_ablation.py
+```
+
+Binary call gate and matched stability study:
+
+```powershell
+agent-evals run-tool-gate ollama qwen3:8b `
+  --experiment-id my-binary-gate-run `
+  --benchmark-path tasks\domain_tool_calling_gate_stability_v0.jsonl `
+  --temperature 0.2 `
+  --seed 101
+
+python scripts\run_gate_stability_matrix.py
+python scripts\build_gate_stability_report.py
 ```
 
 ## Installation

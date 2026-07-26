@@ -17,6 +17,7 @@ from .providers.base import StructuredClient
 from .tool_calling import load_tool_calling_tasks
 from .tool_calling_analysis import analyze_tool_calling_run
 from .tool_calling_experiment import run_tool_calling_model
+from .tool_calling_gate_experiment import run_call_gate_model
 from .tool_calling_router_experiment import run_behavior_router_model
 
 app = typer.Typer(no_args_is_help=True, add_completion=False)
@@ -25,9 +26,15 @@ TOOL_BENCH = Path("tasks/domain_tool_calling_seed_v0.jsonl")
 RAW = Path("results/raw")
 
 
-def client_for(provider: str, model: str) -> StructuredClient:
+def client_for(
+    provider: str,
+    model: str,
+    *,
+    temperature: float = 0.0,
+    seed: int | None = None,
+) -> StructuredClient:
     if provider == "ollama":
-        return OllamaClient(model)
+        return OllamaClient(model, temperature=temperature, seed=seed)
     if provider == "openai":
         return openai_client(model)
     if provider == "openrouter":
@@ -113,9 +120,11 @@ def run_tool_benchmark(
     experiment_id: str | None = None,
     benchmark_path: Path = TOOL_BENCH,
     condition: str = "curated_catalog_zero_shot",
+    temperature: float = 0.0,
+    seed: int | None = None,
 ) -> None:
     load_dotenv()
-    client = client_for(provider, model)
+    client = client_for(provider, model, temperature=temperature, seed=seed)
     output_dir = run_tool_calling_model(
         client=client,
         benchmark_path=benchmark_path,
@@ -136,9 +145,11 @@ def run_tool_router(
     experiment_id: str | None = None,
     benchmark_path: Path = TOOL_BENCH,
     few_shot: bool = False,
+    temperature: float = 0.0,
+    seed: int | None = None,
 ) -> None:
     load_dotenv()
-    client = client_for(provider, model)
+    client = client_for(provider, model, temperature=temperature, seed=seed)
     output_dir = run_behavior_router_model(
         client=client,
         benchmark_path=benchmark_path,
@@ -146,6 +157,29 @@ def run_tool_router(
         experiment_id=experiment_id,
         limit=limit,
         few_shot=few_shot,
+    )
+    summary_path = analyze_tool_calling_run(output_dir)
+    print({"experiment": str(output_dir), "summary": str(summary_path)})
+
+
+@app.command("run-tool-gate")
+def run_tool_gate(
+    provider: str,
+    model: str,
+    limit: int | None = None,
+    experiment_id: str | None = None,
+    benchmark_path: Path = TOOL_BENCH,
+    temperature: float = 0.0,
+    seed: int | None = None,
+) -> None:
+    load_dotenv()
+    client = client_for(provider, model, temperature=temperature, seed=seed)
+    output_dir = run_call_gate_model(
+        client=client,
+        benchmark_path=benchmark_path,
+        output_root=RAW,
+        experiment_id=experiment_id,
+        limit=limit,
     )
     summary_path = analyze_tool_calling_run(output_dir)
     print({"experiment": str(output_dir), "summary": str(summary_path)})

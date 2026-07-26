@@ -19,17 +19,22 @@ class OllamaClient(StructuredClient):
         base_url: str = "http://127.0.0.1:11434",
         timeout: float = 300,
         retries: int = 4,
+        temperature: float = 0.0,
+        seed: int | None = None,
     ):
         self.model = model
         self.base_url = base_url.rstrip("/")
         self.client = httpx.Client(timeout=timeout)
         self.retries = retries
+        self.temperature = temperature
+        self.seed = seed
         self.settings: dict[str, Any] = {
-            "temperature": 0,
+            "temperature": temperature,
             "context_length": 4096,
             "thinking": False,
             "keep_alive": "10m",
             "retries": retries,
+            "seed": seed,
         }
 
     def generate(
@@ -38,6 +43,13 @@ class OllamaClient(StructuredClient):
         max_tokens: int = 700,
         response_schema: dict[str, Any] | None = None,
     ) -> ModelResponse:
+        options: dict[str, Any] = {
+            "temperature": self.temperature,
+            "num_predict": max_tokens,
+            "num_ctx": 4096,
+        }
+        if self.seed is not None:
+            options["seed"] = self.seed
         body = {
             "model": self.model,
             "messages": messages,
@@ -45,7 +57,7 @@ class OllamaClient(StructuredClient):
             "format": response_schema or "json",
             "think": False,
             "keep_alive": "10m",
-            "options": {"temperature": 0, "num_predict": max_tokens, "num_ctx": 4096},
+            "options": options,
         }
         total_latency = 0.0
         last_error: Exception | None = None

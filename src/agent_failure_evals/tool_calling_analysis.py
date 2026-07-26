@@ -140,7 +140,11 @@ def analyze_tool_calling_run(
     provider = rows[0]["provider"] if rows else "unknown"
     manifest = json.loads((experiment_dir / "manifest.json").read_text(encoding="utf-8"))
     condition = str(manifest.get("condition", "unknown"))
-    if "few_shot" in condition:
+    if "hierarchical_binary_call_gate" in condition:
+        method_limitation = (
+            "This is a zero-shot hierarchical binary-gate condition, not a fine-tuned model result."
+        )
+    elif "few_shot" in condition:
         method_limitation = "This is a four-example few-shot structured-output condition, not a fine-tuned model result."
     elif "router" in condition:
         method_limitation = "This is a zero-shot two-stage behavior-router condition, not a fine-tuned model result."
@@ -189,7 +193,7 @@ def analyze_tool_calling_run(
             "",
             "## Limitations",
             "",
-            "- The seed set contains only 15 tasks.",
+            f"- This experiment contains only {int(manifest.get('task_count', aggregate.get('n', 0)))} tasks.",
             "- Tool names and schemas are provisional normalized research interfaces.",
             f"- {method_limitation}",
             "- Execution was not performed in live scientific software.",

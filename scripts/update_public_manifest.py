@@ -40,12 +40,31 @@ CONDITIONS = {
     ],
 }
 
+STABILITY_MODELS = {
+    "qwen2.5-coder:1.5b": "qwen2p5-coder-1p5b",
+    "gemma3:4b": "gemma3-4b",
+    "qwen3:8b": "qwen3-8b",
+}
+STABILITY_SEEDS = [101, 202, 303]
+CONDITIONS["single_stage_gate_stability"] = [
+    f"gate-stability-single-{slug}-seed{seed}"
+    for slug in STABILITY_MODELS.values()
+    for seed in STABILITY_SEEDS
+]
+CONDITIONS["hierarchical_binary_call_gate_stability"] = [
+    f"gate-stability-gate-{slug}-seed{seed}"
+    for slug in STABILITY_MODELS.values()
+    for seed in STABILITY_SEEDS
+]
+
 CATALOG_CONDITION = {
     "curated_catalog_zero_shot": "curated_catalog",
     "full_catalog_zero_shot": "full_catalog",
     "top3_embedding_zero_shot": "top3_embedding",
     "two_stage_behavior_router": "curated_catalog",
     "two_stage_behavior_router_few_shot": "curated_catalog",
+    "single_stage_gate_stability": "curated_catalog_balanced_subset",
+    "hierarchical_binary_call_gate_stability": "curated_catalog_balanced_subset",
 }
 
 
@@ -93,7 +112,22 @@ def main() -> None:
         "total_attempted_task_runs": total_attempted,
         "total_scored_task_runs": total_scored,
         "total_infrastructure_failures": total_failures,
-        "single_run_per_model_condition": True,
+        "main_seed_single_run_per_model_condition": True,
+        "stability_study": {
+            "task_count": 8,
+            "call_required_tasks": 4,
+            "no_call_tasks": 4,
+            "models": list(STABILITY_MODELS),
+            "seeds": STABILITY_SEEDS,
+            "temperature": 0.2,
+            "conditions": [
+                "single_stage_gate_stability",
+                "hierarchical_binary_call_gate_stability",
+            ],
+            "attempted_task_runs": 144,
+            "scored_task_runs": 144,
+            "infrastructure_failures": 0,
+        },
         "retrieval": {
             "model": "mxbai-embed-large",
             "runtime": "ollama",
@@ -111,6 +145,7 @@ def main() -> None:
         "report/domain_toolbench_technical_report_v0_1.md",
         "report/white_paper_local_scientific_agents.md",
         "report/engineering_note_structured_outputs.md",
+        "report/binary_call_gate_stability_note.md",
     ]
     MANIFEST_PATH.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(

@@ -10,6 +10,9 @@ from typing import Any, Literal
 from pydantic import BaseModel, Field
 
 ToolBehavior = Literal["call", "multi_call", "clarify", "abstain"]
+CallGateAction = Literal["call_required", "no_call"]
+CallBranchBehavior = Literal["call", "multi_call"]
+NoCallBranchBehavior = Literal["clarify", "abstain"]
 
 
 class ExpectedToolCall(BaseModel):
@@ -54,6 +57,26 @@ class CallGenerationResult(BaseModel):
     """Stage-two executable calls after behavior has been fixed."""
 
     calls: list[ExpectedToolCall] = Field(default_factory=list)
+
+
+class CallGateDecision(BaseModel):
+    """Binary decision that determines whether tool execution is permitted."""
+
+    action: CallGateAction
+    rationale: str | None = None
+
+
+class CallBranchDecision(BaseModel):
+    """Call-count decision after the binary gate authorizes execution."""
+
+    behavior: CallBranchBehavior
+
+
+class NoCallBranchDecision(BaseModel):
+    """Clarification-versus-abstention decision after the gate blocks execution."""
+
+    behavior: NoCallBranchBehavior
+    clarification: str | None = None
 
 
 @dataclass(frozen=True)

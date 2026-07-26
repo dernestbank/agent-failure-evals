@@ -16,6 +16,10 @@ This directory contains sanitized aggregate outputs from the approved v0.2.0 exp
 - `domain_tool_retrieval_top3.csv` / `.md` — automatic top-3 retrieval diagnostics
 - `domain_retrieval_ablation.csv` / `.md` — curated, full-catalog, and top-3 model comparison
 - `domain_router_ablation.csv` / `.md` — single-stage, zero-shot-router, and four-example-router comparison
+- `domain_gate_stability_runs.csv` — per-seed matched single-stage and binary-gate metrics
+- `domain_gate_stability_aggregate.csv` — model-condition means and seed variability
+- `domain_gate_stability_tasks.csv` — sanitized task-level gate and behavior outcomes
+- `domain_gate_stability.md` — readable stability-study summary
 
 ## Excluded
 
@@ -38,5 +42,7 @@ The frozen FailTrace v1 matrix includes all 15 scenarios. The sensitivity analys
 DomainToolBench results use a separate 15-task seed with provisional normalized scientific tool schemas. Curated-catalog, full-catalog, top-3 retrieval, zero-shot-router, and four-example-router results must not be mixed without naming both the catalog and intervention condition. GPT-OSS accuracy metrics apply only to 12 scored records because three tasks returned no visible structured content.
 
 Router results are single-run intervention ablations. Improvements in behavior accuracy may coincide with worse safe no-call behavior or more false calls; all dimensions must be reported together.
+
+The binary-gate stability study uses a separate eight-task balanced subset, three seeds, and temperature 0.2. Those results must not be merged with the 15-task zero-temperature baselines without naming the task set and sampling condition.
 
 All results are preliminary, not peer reviewed, and apply only to the tested prompts, model identifiers, providers, catalog conditions, and controlled tasks.

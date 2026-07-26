@@ -21,6 +21,9 @@ All notable changes to this project are documented here.
 - Two-stage behavior-router experiment runner
 - Balanced four-example behavior-routing condition
 - Router ablation report comparing single-stage, zero-shot, and few-shot conditions
+- Hierarchical binary call-gate experiment runner
+- Eight-task matched gate-stability subset and three-seed orchestrator
+- Binary call-gate stability technical note and public aggregate reports
 - Surgical DomainToolBench task-repair utility and repair log
 
 ### Results
@@ -34,6 +37,10 @@ All notable changes to this project are documented here.
 - Few-shot demonstrations increased Qwen Coder 1.5B router behavior accuracy from 13.3% to 53.3% but reduced safe no-call accuracy from 100% to 25%
 - Few-shot routing improved Gemma 3 safe no-call accuracy from 50% to 75% while slightly reducing exact-call accuracy
 - Few-shot routing recovered Qwen 3 exact-call accuracy from 80% to 93.3%, but did not surpass the 100% single-stage baseline
+- The binary gate opened on every no-call task for Qwen Coder 1.5B and did not improve exact-call accuracy
+- Gemma's binary gate reduced false calls from 50% to 37.5% but still opened on 75% of no-call tasks and increased latency
+- Qwen 3's binary gate introduced a 25% unsafe-open rate and reduced exact calls from 100% to 87.5%
+- All binary-gate decisions were stable across three seeds under temperature 0.2
 
 ### Changed
 
@@ -43,6 +50,8 @@ All notable changes to this project are documented here.
 - Domain benchmark annotation corrected one multi-call label and added canonical enum values
 - DomainToolBench summaries now record the actual intervention condition instead of labeling every run zero-shot
 - Strict mypy now passes across package source, scripts, and tests
+- Ollama clients now record and apply explicit temperature and seed settings for repeated trials
+- Experiment summaries now report the actual task count and identify hierarchical binary-gate conditions
 
 ### Fixed
 
@@ -54,6 +63,7 @@ All notable changes to this project are documented here.
 ### Planned
 
 - No-tool retrieval threshold and multi-tool-aware retrieval
+- Deterministic precondition gate for required fields, units, identifiers, and tool availability
 - Class-balanced supervised behavior adapter and calibrated fallback
 - Deterministic EvidenceGuard condition
 - Benchmark v1.1 annotation clarifications

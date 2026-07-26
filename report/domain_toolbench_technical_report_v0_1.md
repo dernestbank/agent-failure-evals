@@ -293,6 +293,23 @@ The 1.5B zero-shot router collapsed to `clarify` on all tasks. Balanced examples
 
 The intervention is therefore model-dependent. Decomposition can shift a failure mode rather than remove it, and few-shot examples can exchange conservatism for unsafe action. Router quality must be evaluated jointly on classification, execution accuracy, no-call safety, and latency.
 
+### 7.10 Binary call-gate stability study
+
+A hierarchical binary gate was evaluated against the single-stage baseline on an eight-task balanced subset containing four call-required and four no-call tasks. Qwen Coder 1.5B, Gemma 3 4B, and Qwen 3 8B were each run under both conditions at temperature 0.2 with seeds 101, 202, and 303. All 144 planned task runs produced scored outputs with no infrastructure failures.
+
+| Model | Condition | Gate accuracy | Unsafe gate open | Overblocking | Exact calls | Safe no-call | False calls | Latency |
+|---|---|---:|---:|---:|---:|---:|---:|---:|
+| Qwen Coder 1.5B | Single stage | 45.8% | 91.7% | 16.7% | 16.7% | 8.3% | 45.8% | 3.53s |
+| Qwen Coder 1.5B | Binary gate | 50.0% | 100.0% | 0.0% | 16.7% | 0.0% | 50.0% | 5.49s |
+| Gemma 3 4B | Single stage | 62.5% | 75.0% | 0.0% | 50.0% | 0.0% | 50.0% | 2.37s |
+| Gemma 3 4B | Binary gate | 62.5% | 75.0% | 0.0% | 50.0% | 25.0% | 37.5% | 4.43s |
+| Qwen 3 8B | Single stage | 100.0% | 0.0% | 0.0% | 100.0% | 100.0% | 0.0% | 2.50s |
+| Qwen 3 8B | Binary gate | 87.5% | 25.0% | 0.0% | 87.5% | 75.0% | 12.5% | 3.21s |
+
+Every binary-gate decision was identical across all three seeds for each model. The errors were therefore stable under the tested sampling settings. The 1.5B gate opened on every no-call task. Gemma blocked only one of four no-call tasks. Qwen 3's gate consistently opened on the invalid-input TEA task and its call-count branch consistently reduced a two-tool cross-domain request to one call.
+
+The binary gate did not improve the strongest model and did not repair the weaker models. It reduced one class of Gemma false calls but nearly doubled latency, while it made Qwen 3 less accurate, less safe, and slower than the simpler single-stage system. See `report/binary_call_gate_stability_note.md` for the full matched study.
+
 ## 8. Main findings
 
 ### Finding 1 — The best local model can outperform free hosted alternatives on a bounded seed

@@ -59,7 +59,7 @@
 - [x] Push branch to GitHub
 - [x] Commit and push DomainToolBench baseline/retrieval milestone
 - [x] Commit and push behavior-router milestone (`083e602`)
-- [ ] Commit and push binary-gate stability milestone
+- [x] Commit and push binary-gate stability milestone (`e16a678`)
 - [ ] Review GitHub rendering and links
 - [ ] Tag v0.2.0 only after human confirmation
 

@@ -24,6 +24,10 @@ All notable changes to this project are documented here.
 - Hierarchical binary call-gate experiment runner
 - Eight-task matched gate-stability subset and three-seed orchestrator
 - Binary call-gate stability technical note and public aggregate reports
+- Deterministic ToolCallGuard with strict and sanitize policies
+- Exploratory no-tool retrieval threshold sweep
+- Three-seed ToolCallGuard stability runner and public aggregate reports
+- Deterministic ToolCallGuard technical note
 - Surgical DomainToolBench task-repair utility and repair log
 
 ### Results
@@ -41,6 +45,9 @@ All notable changes to this project are documented here.
 - Gemma's binary gate reduced false calls from 50% to 37.5% but still opened on 75% of no-call tasks and increased latency
 - Qwen 3's binary gate introduced a 25% unsafe-open rate and reduced exact calls from 100% to 87.5%
 - All binary-gate decisions were stable across three seeds under temperature 0.2
+- ToolCallGuard sanitization preserved 100% of already exact proposals and captured 100% of unsafe proposals across 135 fresh proposals
+- Sanitization increased exact-call accuracy to 93.3% for Qwen 3, 93.3% for Gemma 3, and 73.3% for Qwen Coder 1.5B
+- Safe no-call accuracy reached 100% and false tool calls fell to zero for all three guard-study models
 
 ### Changed
 
@@ -52,6 +59,8 @@ All notable changes to this project are documented here.
 - Strict mypy now passes across package source, scripts, and tests
 - Ollama clients now record and apply explicit temperature and seed settings for repeated trials
 - Experiment summaries now report the actual task count and identify hierarchical binary-gate conditions
+- Guard sanitization now blocks calls when explicitly requested values are invalid instead of deleting them and executing defaults
+- Grounded numeric strings and number words can be canonically converted to schema-compatible numeric values
 
 ### Fixed
 
@@ -62,8 +71,8 @@ All notable changes to this project are documented here.
 
 ### Planned
 
-- No-tool retrieval threshold and multi-tool-aware retrieval
-- Deterministic precondition gate for required fields, units, identifiers, and tool availability
+- Held-out no-tool threshold calibration and multi-tool-aware retrieval
+- Live versioned MCP schema and sandbox-execution validation
 - Class-balanced supervised behavior adapter and calibrated fallback
 - Deterministic EvidenceGuard condition
 - Benchmark v1.1 annotation clarifications

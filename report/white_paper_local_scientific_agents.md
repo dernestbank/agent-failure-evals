@@ -397,6 +397,18 @@ The gate did not produce a monotonic safety gain. Qwen Coder 1.5B opened on ever
 
 The result reinforces a central design principle: a model-generated gate is another model decision, not a deterministic safety guarantee. Precondition checks, unit and identifier validation, no-tool retrieval thresholds, and post-generation call validation are more suitable for hard safety boundaries.
 
+### Deterministic ToolCallGuard stability
+
+A deterministic ToolCallGuard was then evaluated after top-three retrieval and model proposal generation. Qwen 3 8B, Gemma 3 4B, and Qwen Coder 1.5B produced 135 proposals across 15 tasks, three seeds, and temperature 0.2. Strict blocking and sanitize-and-preserve were applied to the same proposal, producing 270 paired transformations without extra model inference.
+
+Sanitization preserved every already exact proposal and captured every unsafe proposal. Exact-call accuracy rose from 80.0% to 93.3% for Qwen 3, from 48.9% to 93.3% for Gemma 3, and from 11.1% to 73.3% for the 1.5B coder. Safe no-call accuracy reached 100% and false tool calls fell to zero for all three models.
+
+These gains came from deterministic filtering, not improved model reasoning. The guard removed unsupported optional arguments, invalid values, irrelevant calls, and surplus calls while preserving grounded core calls. It blocked requests when an explicitly requested value was invalid rather than executing defaults after silently deleting the value.
+
+The remaining failures exposed the boundary of deterministic post-processing. The guard could not create a missing retrieved TEA comparison tool, invent a call when the model incorrectly clarified, or supply an absent second step in a cross-domain workflow. Retrieval and model capability therefore remain upstream limits.
+
+The exploratory 0.60 no-tool threshold perfectly separated the current two abstention tasks from the 13 relevant-tool tasks, but it was selected after inspecting the seed and requires held-out calibration.
+
 ### Architectural implication
 
 The preliminary evidence supports a hybrid architecture:
@@ -404,6 +416,8 @@ The preliminary evidence supports a hybrid architecture:
 - Use the simplest architecture that meets bounded accuracy and safety requirements.
 - Treat safe no-call behavior as a first-class requirement.
 - Validate router interventions separately for each model family and scale.
+- Use deterministic ToolCallGuard checks for hard execution boundaries.
+- Preserve valid core calls only through narrow, logged transformations.
 - Validate every call deterministically before execution.
 - Measure completion reliability separately from accuracy on surviving outputs.
 - Reserve hosted models as fallback or independent review rather than assuming they are automatically more reliable.

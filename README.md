@@ -185,6 +185,18 @@ A matched eight-task study compared the single-stage caller with a hierarchical 
 
 All gate decisions were identical across seeds, so the observed errors were stable under the tested settings. The study does not support treating a model-generated binary gate as a hard safety boundary.
 
+### Deterministic ToolCallGuard stability study
+
+A deterministic post-generation guard was evaluated on 135 fresh proposals from Qwen 3 8B, Gemma 3 4B, and Qwen Coder 1.5B across three seeds at temperature 0.2. The guard used an exploratory 0.60 no-tool retrieval threshold plus schema, range, grounding, and surplus-call validation.
+
+Sanitize-and-preserve produced:
+
+- Qwen 3 8B: exact calls **80.0% → 93.3%**, safe no-call **75% → 100%**, false calls **6.7% → 0%**.
+- Gemma 3 4B: exact calls **48.9% → 93.3%**, safe no-call **0% → 100%**, false calls **26.7% → 0%**.
+- Qwen Coder 1.5B: exact calls **11.1% → 73.3%**, safe no-call **8.3% → 100%**, false calls **24.4% → 0%**.
+
+The guard preserved 100% of already exact proposals and captured 100% of unsafe proposals. These are deterministic filtering gains, not improved model reasoning. Residual failures came from missing retrieved tools, absent model calls, and incomplete multi-tool reasoning.
+
 See:
 
 - `report/domain_toolbench_technical_report_v0_1.md`
@@ -197,6 +209,9 @@ See:
 - `results/public/domain_router_ablation.md`
 - `report/binary_call_gate_stability_note.md`
 - `results/public/domain_gate_stability.md`
+- `report/deterministic_tool_call_guard_note.md`
+- `results/public/domain_tool_guard_stability.md`
+- `results/public/domain_retrieval_threshold_sweep.md`
 
 ### Run DomainToolBench
 
@@ -249,6 +264,15 @@ agent-evals run-tool-gate ollama qwen3:8b `
 
 python scripts\run_gate_stability_matrix.py
 python scripts\build_gate_stability_report.py
+```
+
+Deterministic ToolCallGuard study:
+
+```powershell
+python scripts\build_retrieval_threshold_sweep.py
+python scripts\run_tool_guard_stability_matrix.py
+python scripts\recompute_tool_guard_outcomes.py
+python scripts\build_tool_guard_stability_report.py
 ```
 
 ## Installation

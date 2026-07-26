@@ -427,10 +427,100 @@
         "attempted_tasks": 8,
         "scored_tasks": 8,
         "infrastructure_failures": 0
+      },
+      {
+        "experiment_id": "toolguard-stability-qwen2p5-coder-1p5b-seed101",
+        "experiment_condition": "tool_call_guard_stability_proposals",
+        "catalog_condition": "top3_embedding",
+        "provider": "ollama",
+        "model": "qwen2.5-coder:1.5b",
+        "attempted_tasks": 15,
+        "scored_tasks": 15,
+        "infrastructure_failures": 0
+      },
+      {
+        "experiment_id": "toolguard-stability-qwen2p5-coder-1p5b-seed202",
+        "experiment_condition": "tool_call_guard_stability_proposals",
+        "catalog_condition": "top3_embedding",
+        "provider": "ollama",
+        "model": "qwen2.5-coder:1.5b",
+        "attempted_tasks": 15,
+        "scored_tasks": 15,
+        "infrastructure_failures": 0
+      },
+      {
+        "experiment_id": "toolguard-stability-qwen2p5-coder-1p5b-seed303",
+        "experiment_condition": "tool_call_guard_stability_proposals",
+        "catalog_condition": "top3_embedding",
+        "provider": "ollama",
+        "model": "qwen2.5-coder:1.5b",
+        "attempted_tasks": 15,
+        "scored_tasks": 15,
+        "infrastructure_failures": 0
+      },
+      {
+        "experiment_id": "toolguard-stability-gemma3-4b-seed101",
+        "experiment_condition": "tool_call_guard_stability_proposals",
+        "catalog_condition": "top3_embedding",
+        "provider": "ollama",
+        "model": "gemma3:4b",
+        "attempted_tasks": 15,
+        "scored_tasks": 15,
+        "infrastructure_failures": 0
+      },
+      {
+        "experiment_id": "toolguard-stability-gemma3-4b-seed202",
+        "experiment_condition": "tool_call_guard_stability_proposals",
+        "catalog_condition": "top3_embedding",
+        "provider": "ollama",
+        "model": "gemma3:4b",
+        "attempted_tasks": 15,
+        "scored_tasks": 15,
+        "infrastructure_failures": 0
+      },
+      {
+        "experiment_id": "toolguard-stability-gemma3-4b-seed303",
+        "experiment_condition": "tool_call_guard_stability_proposals",
+        "catalog_condition": "top3_embedding",
+        "provider": "ollama",
+        "model": "gemma3:4b",
+        "attempted_tasks": 15,
+        "scored_tasks": 15,
+        "infrastructure_failures": 0
+      },
+      {
+        "experiment_id": "toolguard-stability-qwen3-8b-seed101",
+        "experiment_condition": "tool_call_guard_stability_proposals",
+        "catalog_condition": "top3_embedding",
+        "provider": "ollama",
+        "model": "qwen3:8b",
+        "attempted_tasks": 15,
+        "scored_tasks": 15,
+        "infrastructure_failures": 0
+      },
+      {
+        "experiment_id": "toolguard-stability-qwen3-8b-seed202",
+        "experiment_condition": "tool_call_guard_stability_proposals",
+        "catalog_condition": "top3_embedding",
+        "provider": "ollama",
+        "model": "qwen3:8b",
+        "attempted_tasks": 15,
+        "scored_tasks": 15,
+        "infrastructure_failures": 0
+      },
+      {
+        "experiment_id": "toolguard-stability-qwen3-8b-seed303",
+        "experiment_condition": "tool_call_guard_stability_proposals",
+        "catalog_condition": "top3_embedding",
+        "provider": "ollama",
+        "model": "qwen3:8b",
+        "attempted_tasks": 15,
+        "scored_tasks": 15,
+        "infrastructure_failures": 0
       }
     ],
-    "total_attempted_task_runs": 429,
-    "total_scored_task_runs": 426,
+    "total_attempted_task_runs": 564,
+    "total_scored_task_runs": 561,
     "total_infrastructure_failures": 3,
     "main_seed_single_run_per_model_condition": true,
     "stability_study": {
@@ -464,6 +554,31 @@
       "mean_expected_tool_recall": 0.9545454545,
       "perfect_recall_tasks": "10/11"
     },
+    "tool_call_guard_stability": {
+      "task_count": 15,
+      "models": [
+        "qwen2.5-coder:1.5b",
+        "gemma3:4b",
+        "qwen3:8b"
+      ],
+      "seeds": [
+        101,
+        202,
+        303
+      ],
+      "temperature": 0.2,
+      "retrieval_threshold": 0.6,
+      "threshold_status": "exploratory_post_hoc_current_seed",
+      "model_proposals": 135,
+      "scored_model_proposals": 135,
+      "paired_guard_transformations": 270,
+      "infrastructure_failures": 0,
+      "guard_revision": "v0.2-explicit-invalid-block-numeric-coercion",
+      "policies": [
+        "strict",
+        "sanitize"
+      ]
+    },
     "human_annotation_review_status": "author_review_required_before_external_dataset_release"
   },
   "public_reports": [
@@ -471,6 +586,7 @@
     "report/domain_toolbench_technical_report_v0_1.md",
     "report/white_paper_local_scientific_agents.md",
     "report/engineering_note_structured_outputs.md",
-    "report/binary_call_gate_stability_note.md"
+    "report/binary_call_gate_stability_note.md",
+    "report/deterministic_tool_call_guard_note.md"
   ]
 }

@@ -36,6 +36,13 @@ class DomainToolCallingTask(BaseModel):
     difficulty: str
     provisional_schema: bool = True
     conditional_execution: bool = False
+    catalog_condition: str | None = None
+    catalog_size: int | None = None
+    retrieval_condition: str | None = None
+    retrieval_model: str | None = None
+    retrieval_selected_tools: list[str] = Field(default_factory=list)
+    retrieval_scores: dict[str, float] = Field(default_factory=dict)
+    retrieval_recall: float | None = None
 
 
 class ToolCallingResult(BaseModel):

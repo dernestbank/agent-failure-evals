@@ -310,6 +310,25 @@ Every binary-gate decision was identical across all three seeds for each model. 
 
 The binary gate did not improve the strongest model and did not repair the weaker models. It reduced one class of Gemma false calls but nearly doubled latency, while it made Qwen 3 less accurate, less safe, and slower than the simpler single-stage system. See `report/binary_call_gate_stability_note.md` for the full matched study.
 
+### 7.11 Deterministic ToolCallGuard stability study
+
+A deterministic ToolCallGuard was evaluated after top-three retrieval and model proposal generation. Three local models produced 135 proposals across 15 tasks, three seeds, and temperature 0.2. Strict blocking and sanitize-and-preserve were applied to the same proposal, producing 270 paired deterministic transformations without additional model inference.
+
+The guard checked retrieval score, tool membership, request-to-tool grounding, required and explicitly requested arguments, JSON types, enums, numeric ranges, conditional cross-argument constraints, identifier grounding, unsupported optional values, surplus calls, and duplicate calls. The final revision blocked an entire call when an explicitly requested value was invalid and canonically converted grounded numeric strings such as `"10"` to `10`.
+
+| Model | Policy | Exact calls | Safe no-call | False calls | Exact preservation | Unsafe capture |
+|---|---|---:|---:|---:|---:|---:|
+| Qwen 3 8B | Model only | 80.0% | 75.0% | 6.7% | 100% | 0% |
+| Qwen 3 8B | Sanitize | **93.3%** | **100%** | **0%** | **100%** | **100%** |
+| Gemma 3 4B | Model only | 48.9% | 0% | 26.7% | 100% | 0% |
+| Gemma 3 4B | Sanitize | **93.3%** | **100%** | **0%** | **100%** | **100%** |
+| Qwen Coder 1.5B | Model only | 11.1% | 8.3% | 24.4% | 100% | 0% |
+| Qwen Coder 1.5B | Sanitize | **73.3%** | **100%** | **0%** | **100%** | **100%** |
+
+Sanitization preserved every already exact proposal and captured every unsafe proposal in the repeated study. The remaining errors were outside the safe correction boundary: a missing retrieved TEA comparison tool, model refusals on answerable tasks, and incomplete multi-tool reasoning. The guard did not invent missing calls or scientific values.
+
+The 0.60 retrieval threshold was selected after inspecting the current seed and is exploratory rather than held-out or preregistered. The result supports deterministic validation as an execution boundary while preserving the distinction between filtered outputs and improved model reasoning. See `report/deterministic_tool_call_guard_note.md` for the full study.
+
 ## 8. Main findings
 
 ### Finding 1 — The best local model can outperform free hosted alternatives on a bounded seed
@@ -338,6 +357,10 @@ The first Qwen tool-calling pilot failed all tasks because the provider adapter 
 
 The two-stage router improved some capabilities while degrading others. Few-shot examples repaired the 1.5B model's classification collapse but reduced safe no-call behavior; they made Gemma safer but slightly less accurate; and they helped Qwen's router without surpassing its simpler single-stage baseline. Architectural interventions require model-specific ablations rather than universal assumptions.
 
+### Finding 7 — Deterministic validation can contain errors that prompting does not
+
+The ToolCallGuard preserved every already exact proposal, captured every unsafe proposal, and substantially improved usable call accuracy without another model decision. The gains came from transparent filtering and validation, not improved reasoning. Retrieval and model capability still bounded what the system could recover.
+
 ## 9. Planned intervention experiments
 
 ### 9.1 Retrieval improvements
@@ -345,7 +368,7 @@ The two-stage router improved some capabilities while degrading others. Few-shot
 The first full-catalog and top-3 retrieval ablation is complete. Next retrieval experiments should test:
 
 - Top-1, top-3, and top-5
-- A no-tool similarity threshold
+- Held-out calibration of the exploratory no-tool similarity threshold
 - Multi-tool coverage-aware retrieval
 - Hybrid lexical and embedding retrieval
 - Domain-filtered retrieval before semantic ranking
@@ -364,7 +387,19 @@ The initial zero-shot and four-example router ablation is complete. Next tests s
 - Cost-sensitive training that penalizes unsafe calls more heavily than clarification errors
 - Repeated trials to distinguish stable policy changes from single-run variance
 
-### 9.3 Prompt and schema ablations
+### 9.3 Deterministic guard follow-up
+
+The first ToolCallGuard ablation and three-seed stability study are complete. Next tests should include:
+
+- Held-out threshold calibration and additional no-tool hard negatives
+- Live versioned MCP schemas instead of normalized provisional tools
+- Sandboxed execution validation
+- Unit conversion and database-identifier resolution
+- Schema drift and tool-version changes
+- Adversarial argument injection
+- Guard-aware fine-tuning versus post-hoc filtering
+
+### 9.4 Prompt and schema ablations
 
 Compare:
 
@@ -375,11 +410,11 @@ Compare:
 - Narrow versus broad tools
 - One versus three domain examples
 
-### 9.4 Execution feedback
+### 9.5 Execution feedback
 
 Execute calls in a deterministic mock environment and provide structured errors. Measure first-call success, repair success, regressions, and loop behavior.
 
-### 9.5 Domain adaptation
+### 9.6 Domain adaptation
 
 Train a QLoRA checkpoint on verified examples emphasizing:
 
@@ -390,7 +425,7 @@ Train a QLoRA checkpoint on verified examples emphasizing:
 - Sequence stopping
 - Argument canonicalization
 
-### 9.6 Live MCP evaluation
+### 9.7 Live MCP evaluation
 
 Replace provisional schemas with versioned live tool manifests and execute sandboxed workflows against openLCA-MCP, green-hydrogen TEA, and BioFlow Studio.
 
@@ -417,10 +452,15 @@ Repository components:
 - `src/agent_failure_evals/tool_calling_experiment.py`
 - `src/agent_failure_evals/tool_calling_analysis.py`
 - `src/agent_failure_evals/tool_calling_router_experiment.py`
+- `src/agent_failure_evals/tool_call_guard.py`
+- `src/agent_failure_evals/tool_calling_guard_experiment.py`
 - `scripts/build_domain_tool_matrix.py`
 - `scripts/build_router_ablation.py`
+- `scripts/build_retrieval_threshold_sweep.py`
+- `scripts/build_tool_guard_stability_report.py`
 - `results/public/domain_tool_calling_baselines.csv`
 - `results/public/domain_router_ablation.csv`
+- `results/public/domain_tool_guard_stability_aggregate.csv`
 
 Raw responses remain excluded from the public repository until privacy and licensing review.
 

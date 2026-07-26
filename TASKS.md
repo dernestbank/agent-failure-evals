@@ -60,6 +60,7 @@
 - [x] Commit and push DomainToolBench baseline/retrieval milestone
 - [x] Commit and push behavior-router milestone (`083e602`)
 - [x] Commit and push binary-gate stability milestone (`e16a678`)
+- [ ] Commit and push deterministic ToolCallGuard milestone
 - [ ] Review GitHub rendering and links
 - [ ] Tag v0.2.0 only after human confirmation
 
@@ -133,8 +134,10 @@
 - [x] Compare binary gate with matched single-stage baseline
 - [ ] Compare verbose and simplified schemas
 - [x] Add schema-constrained output condition
-- [ ] Add deterministic precondition gate for missing fields, units, and identifiers
-- [ ] Combine no-tool retrieval threshold with deterministic preconditions
+- [x] Add deterministic precondition guard for missing fields, types, enums, ranges, identifiers, and surplus calls
+- [x] Combine exploratory no-tool retrieval threshold with deterministic preconditions
+- [ ] Calibrate the no-tool threshold on a separate held-out split
+- [ ] Evaluate guard rules against live versioned MCP schemas
 - [ ] Add structured execution feedback and bounded repair
 - [x] Measure structural validity separately from semantic accuracy
 - [x] Measure model and condition latency
@@ -143,7 +146,8 @@
 ### Domain adaptation
 
 - [ ] Create verified synthetic expansion pipeline
-- [ ] Add deterministic schema, range, unit, and execution checks
+- [x] Add deterministic schema, range, grounding, and pre-execution checks
+- [ ] Add live unit-resolution and sandbox-execution checks
 - [ ] Curate positive, negative, abstention, and repair examples
 - [ ] Train first QLoRA checkpoint
 - [ ] Evaluate general capability retention
@@ -157,6 +161,8 @@
 - [ ] Auditable Scientific AI Agents white paper
 - [x] Local Scientific Agents white paper draft
 - [x] DomainToolBench technical report draft
+- [x] Binary Call Gate stability technical note
+- [x] Deterministic ToolCallGuard technical note
 - [x] Structured Outputs Are Not Enough engineering note draft
 - [x] Local tool-calling training curriculum
 - [ ] SDAI Labs research landing page

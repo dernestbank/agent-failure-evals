@@ -46,6 +46,11 @@ STABILITY_MODELS = {
     "qwen3:8b": "qwen3-8b",
 }
 STABILITY_SEEDS = [101, 202, 303]
+TOOL_GUARD_EXPERIMENTS = [
+    f"toolguard-stability-{slug}-seed{seed}"
+    for slug in STABILITY_MODELS.values()
+    for seed in STABILITY_SEEDS
+]
 CONDITIONS["single_stage_gate_stability"] = [
     f"gate-stability-single-{slug}-seed{seed}"
     for slug in STABILITY_MODELS.values()
@@ -102,6 +107,39 @@ def main() -> None:
                 }
             )
 
+    tool_guard_scored = 0
+    tool_guard_attempted = 0
+    tool_guard_failures = 0
+    for experiment_id in TOOL_GUARD_EXPERIMENTS:
+        raw_dir = ROOT / "results" / "raw" / experiment_id
+        experiment_manifest = json.loads((raw_dir / "manifest.json").read_text(encoding="utf-8"))
+        payloads = [
+            json.loads(path.read_text(encoding="utf-8"))
+            for path in sorted(raw_dir.glob("*.json"))
+            if path.name != "manifest.json"
+        ]
+        failures = [payload for payload in payloads if payload.get("error")]
+        scored = len(payloads) - len(failures)
+        attempted = len(payloads)
+        tool_guard_scored += scored
+        tool_guard_attempted += attempted
+        tool_guard_failures += len(failures)
+        total_scored += scored
+        total_attempted += attempted
+        total_failures += len(failures)
+        records.append(
+            {
+                "experiment_id": experiment_id,
+                "experiment_condition": "tool_call_guard_stability_proposals",
+                "catalog_condition": "top3_embedding",
+                "provider": experiment_manifest["provider"],
+                "model": experiment_manifest["model"],
+                "attempted_tasks": attempted,
+                "scored_tasks": scored,
+                "infrastructure_failures": len(failures),
+            }
+        )
+
     manifest["domain_toolbench"] = {
         "name": "DomainToolBench",
         "version": "0.1-seed",
@@ -136,6 +174,20 @@ def main() -> None:
             "mean_expected_tool_recall": 0.9545454545,
             "perfect_recall_tasks": "10/11",
         },
+        "tool_call_guard_stability": {
+            "task_count": 15,
+            "models": list(STABILITY_MODELS),
+            "seeds": STABILITY_SEEDS,
+            "temperature": 0.2,
+            "retrieval_threshold": 0.60,
+            "threshold_status": "exploratory_post_hoc_current_seed",
+            "model_proposals": tool_guard_attempted,
+            "scored_model_proposals": tool_guard_scored,
+            "paired_guard_transformations": tool_guard_scored * 2,
+            "infrastructure_failures": tool_guard_failures,
+            "guard_revision": "v0.2-explicit-invalid-block-numeric-coercion",
+            "policies": ["strict", "sanitize"],
+        },
         "human_annotation_review_status": (
             "author_review_required_before_external_dataset_release"
         ),
@@ -146,6 +198,7 @@ def main() -> None:
         "report/white_paper_local_scientific_agents.md",
         "report/engineering_note_structured_outputs.md",
         "report/binary_call_gate_stability_note.md",
+        "report/deterministic_tool_call_guard_note.md",
     ]
     MANIFEST_PATH.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(

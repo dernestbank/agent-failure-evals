@@ -1,0 +1,15 @@
+policy_and_code,count
+sanitize:above_maximum,3
+sanitize:argument_not_grounded,16
+sanitize:missing_required_argument,3
+sanitize:requested_argument_omitted,2
+sanitize:retrieval_below_threshold,6
+sanitize:tool_not_grounded,9
+sanitize:unknown_argument,2
+strict:above_maximum,3
+strict:argument_not_grounded,16
+strict:missing_required_argument,3
+strict:requested_argument_omitted,2
+strict:retrieval_below_threshold,6
+strict:tool_not_grounded,9
+strict:unknown_argument,2

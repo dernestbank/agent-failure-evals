@@ -20,6 +20,12 @@ This directory contains sanitized aggregate outputs from the approved v0.2.0 exp
 - `domain_gate_stability_aggregate.csv` — model-condition means and seed variability
 - `domain_gate_stability_tasks.csv` — sanitized task-level gate and behavior outcomes
 - `domain_gate_stability.md` — readable stability-study summary
+- `domain_retrieval_threshold_sweep.csv` / `.md` — exploratory no-tool threshold trade-off
+- `domain_tool_guard_ablation.csv` / `.md` — deterministic guard ablation on frozen proposals
+- `domain_tool_guard_stability_runs.csv` — per-seed fresh proposal and guard metrics
+- `domain_tool_guard_stability_aggregate.csv` — model-policy means and stability metrics
+- `domain_tool_guard_stability_tasks.csv` — sanitized task-level proposal and guard outcomes
+- `domain_tool_guard_stability.md` — readable repeated-study summary
 
 ## Excluded
 
@@ -44,5 +50,7 @@ DomainToolBench results use a separate 15-task seed with provisional normalized 
 Router results are single-run intervention ablations. Improvements in behavior accuracy may coincide with worse safe no-call behavior or more false calls; all dimensions must be reported together.
 
 The binary-gate stability study uses a separate eight-task balanced subset, three seeds, and temperature 0.2. Those results must not be merged with the 15-task zero-temperature baselines without naming the task set and sampling condition.
+
+The ToolCallGuard stability study uses the 15-task top-three retrieval set, three seeds, temperature 0.2, and deterministic paired transformations. The 0.60 retrieval threshold was selected post hoc on the current seed. Guard improvements describe filtering and validation, not improved model reasoning.
 
 All results are preliminary, not peer reviewed, and apply only to the tested prompts, model identifiers, providers, catalog conditions, and controlled tasks.

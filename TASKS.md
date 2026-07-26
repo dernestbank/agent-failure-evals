@@ -58,7 +58,7 @@
 - [x] Commit provider-matrix branch
 - [x] Push branch to GitHub
 - [x] Commit and push DomainToolBench baseline/retrieval milestone
-- [ ] Commit and push behavior-router milestone
+- [x] Commit and push behavior-router milestone (`083e602`)
 - [ ] Review GitHub rendering and links
 - [ ] Tag v0.2.0 only after human confirmation
 

@@ -5,8 +5,15 @@ from __future__ import annotations
 import json
 from collections import Counter
 from pathlib import Path
+from typing import TypedDict
 
 from .schemas.models import Scenario
+
+
+class ScenarioSummary(TypedDict):
+    count: int
+    categories: dict[str, int]
+    statuses: dict[str, int]
 
 
 def load_scenarios(path: Path) -> list[Scenario]:
@@ -23,7 +30,7 @@ def load_scenarios(path: Path) -> list[Scenario]:
     return scenarios
 
 
-def summary(scenarios: list[Scenario]) -> dict[str, object]:
+def summary(scenarios: list[Scenario]) -> ScenarioSummary:
     return {
         "count": len(scenarios),
         "categories": dict(Counter(s.category for s in scenarios)),

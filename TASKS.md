@@ -57,7 +57,8 @@
 - [x] Add citation metadata and changelog
 - [x] Commit provider-matrix branch
 - [x] Push branch to GitHub
-- [ ] Commit and push DomainToolBench baseline/retrieval milestone
+- [x] Commit and push DomainToolBench baseline/retrieval milestone
+- [ ] Commit and push behavior-router milestone
 - [ ] Review GitHub rendering and links
 - [ ] Tag v0.2.0 only after human confirmation
 
@@ -123,8 +124,9 @@
 - [x] Compare full catalog and top-3 retrieval
 - [ ] Add no-tool retrieval threshold
 - [ ] Add multi-tool coverage-aware retrieval
-- [ ] Add two-stage behavior router
-- [ ] Compare zero-shot and retrieved few-shot examples
+- [x] Add two-stage behavior router
+- [x] Compare zero-shot and balanced few-shot behavior routing
+- [x] Compare router conditions with the single-stage baseline
 - [ ] Compare verbose and simplified schemas
 - [x] Add schema-constrained output condition
 - [ ] Add structured execution feedback and bounded repair

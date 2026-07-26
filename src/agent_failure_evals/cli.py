@@ -17,6 +17,7 @@ from .providers.base import StructuredClient
 from .tool_calling import load_tool_calling_tasks
 from .tool_calling_analysis import analyze_tool_calling_run
 from .tool_calling_experiment import run_tool_calling_model
+from .tool_calling_router_experiment import run_behavior_router_model
 
 app = typer.Typer(no_args_is_help=True, add_completion=False)
 BENCH = Path("tasks/benchmark_v1.jsonl")
@@ -122,6 +123,29 @@ def run_tool_benchmark(
         experiment_id=experiment_id,
         limit=limit,
         condition=condition,
+    )
+    summary_path = analyze_tool_calling_run(output_dir)
+    print({"experiment": str(output_dir), "summary": str(summary_path)})
+
+
+@app.command("run-tool-router")
+def run_tool_router(
+    provider: str,
+    model: str,
+    limit: int | None = None,
+    experiment_id: str | None = None,
+    benchmark_path: Path = TOOL_BENCH,
+    few_shot: bool = False,
+) -> None:
+    load_dotenv()
+    client = client_for(provider, model)
+    output_dir = run_behavior_router_model(
+        client=client,
+        benchmark_path=benchmark_path,
+        output_root=RAW,
+        experiment_id=experiment_id,
+        limit=limit,
+        few_shot=few_shot,
     )
     summary_path = analyze_tool_calling_run(output_dir)
     print({"experiment": str(output_dir), "summary": str(summary_path)})

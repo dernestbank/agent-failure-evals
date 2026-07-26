@@ -54,6 +54,7 @@ def collect_tool_calling_results(
         rows.append(
             {
                 "experiment_id": manifest["experiment_id"],
+                "condition": manifest.get("condition", "unknown"),
                 "provider": payload["provider"],
                 "model": payload["model"],
                 "task_id": task["task_id"],
@@ -137,6 +138,16 @@ def analyze_tool_calling_run(
 
     model = rows[0]["model"] if rows else "unknown"
     provider = rows[0]["provider"] if rows else "unknown"
+    manifest = json.loads((experiment_dir / "manifest.json").read_text(encoding="utf-8"))
+    condition = str(manifest.get("condition", "unknown"))
+    if "few_shot" in condition:
+        method_limitation = "This is a four-example few-shot structured-output condition, not a fine-tuned model result."
+    elif "router" in condition:
+        method_limitation = "This is a zero-shot two-stage behavior-router condition, not a fine-tuned model result."
+    else:
+        method_limitation = (
+            "This is a zero-shot structured-output baseline, not a fine-tuned model result."
+        )
     percent_metrics = [
         "behavior_accuracy",
         "sequence_exact_accuracy",
@@ -147,10 +158,11 @@ def analyze_tool_calling_run(
         "safe_no_call_accuracy",
     ]
     lines = [
-        "# DomainToolBench Seed Baseline",
+        "# DomainToolBench Experiment Summary",
         "",
         f"- Experiment: `{experiment_dir.name}`",
         f"- Provider/model: `{provider}/{model}`",
+        f"- Condition: `{condition}`",
         f"- Scored tasks: {aggregate.get('n', 0)}",
         f"- Infrastructure failures: {len(failures)}",
         "- Benchmark status: provisional normalized scientific tool schemas",
@@ -179,7 +191,7 @@ def analyze_tool_calling_run(
             "",
             "- The seed set contains only 15 tasks.",
             "- Tool names and schemas are provisional normalized research interfaces.",
-            "- This is a zero-shot structured-output baseline, not a fine-tuned model result.",
+            f"- {method_limitation}",
             "- Execution was not performed in live scientific software.",
             "- Exact call accuracy may undercount semantically valid alternatives not yet annotated.",
         ]

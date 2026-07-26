@@ -39,7 +39,7 @@ def main() -> None:
             if row["task_id"] not in EXCLUDE:
                 groups[(row["provider"], row["model"], row["condition"])].append(row)
 
-    output_rows: list[dict[str, object]] = []
+    output_rows: list[dict[str, str | int | float]] = []
     for (provider, model, condition), rows in groups.items():
         noncomplete = [row for row in rows if row["expected_status"] != "completed"]
         complete = [row for row in rows if row["expected_status"] == "completed"]
@@ -94,9 +94,13 @@ def main() -> None:
     ]
     for row in output_rows:
         lines.append(
-            "| {provider} | {model} | {condition} | {n} | {status_accuracy:.1%} | {false_success_rate:.1%} | {failure_detection_rate:.1%} | {true_completion_rate:.1%} | {appropriate_abstention_rate:.1%} | {evidence_completeness:.1%} |".format(
-                **row
-            )
+            f"| {row['provider']} | {row['model']} | {row['condition']} | "
+            f"{int(row['n'])} | {float(row['status_accuracy']):.1%} | "
+            f"{float(row['false_success_rate']):.1%} | "
+            f"{float(row['failure_detection_rate']):.1%} | "
+            f"{float(row['true_completion_rate']):.1%} | "
+            f"{float(row['appropriate_abstention_rate']):.1%} | "
+            f"{float(row['evidence_completeness']):.1%} |"
         )
     lines += [
         "",

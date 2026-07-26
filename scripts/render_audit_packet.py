@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import ast
 import json
+import math
 from pathlib import Path
+from typing import Any, cast
 
 import pandas as pd
 
@@ -13,8 +15,8 @@ CSV = ROOT / "results" / "processed" / "manual_audit_sample.csv"
 OUT = ROOT / "results" / "processed" / "manual_audit_packet.md"
 
 
-def parse_cell(value):
-    if pd.isna(value):
+def parse_cell(value: object) -> object:
+    if value is None or (isinstance(value, float) and math.isnan(value)):
         return None
     if not isinstance(value, str):
         return value
@@ -27,12 +29,12 @@ def parse_cell(value):
 def main() -> None:
     frame = pd.read_csv(CSV)
     lines = ["# Manual Audit Packet", "", f"Records: {len(frame)}", ""]
-    for index, row in frame.iterrows():
-        raw_path = Path(row["raw_record_path"])
-        payload = json.loads(raw_path.read_text(encoding="utf-8"))
-        scenario = payload["scenario"]
+    for number, (_, row) in enumerate(frame.iterrows(), start=1):
+        raw_path = Path(str(row["raw_record_path"]))
+        payload = cast(dict[str, Any], json.loads(raw_path.read_text(encoding="utf-8")))
+        scenario = cast(dict[str, Any], payload["scenario"])
         lines += [
-            f"## {index + 1}. {row['model']} / {row['condition']} / {row['task_id']}",
+            f"## {number}. {row['model']} / {row['condition']} / {row['task_id']}",
             "",
             f"- Provider: `{row['provider']}`",
             f"- Category: `{row['category']}`",

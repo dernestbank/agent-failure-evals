@@ -7,7 +7,7 @@ import json
 import math
 from copy import deepcopy
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import httpx
 
@@ -48,7 +48,8 @@ def embed(texts: list[str]) -> list[list[float]]:
         timeout=300,
     )
     response.raise_for_status()
-    return response.json()["embeddings"]
+    payload = cast(dict[str, Any], response.json())
+    return cast(list[list[float]], payload["embeddings"])
 
 
 def cosine(left: list[float], right: list[float]) -> float:

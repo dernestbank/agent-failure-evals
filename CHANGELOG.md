@@ -18,6 +18,9 @@ All notable changes to this project are documented here.
 - Local Scientific Agents white-paper results section
 - Structured Outputs Are Not Enough engineering note
 - Local tool-calling fine-tuning curriculum
+- Two-stage behavior-router experiment runner
+- Balanced four-example behavior-routing condition
+- Router ablation report comparing single-stage, zero-shot, and few-shot conditions
 - Surgical DomainToolBench task-repair utility and repair log
 
 ### Results
@@ -28,6 +31,9 @@ All notable changes to this project are documented here.
 - Full-catalog exposure reduced exact-call accuracy for all three tested local models
 - Top-3 retrieval achieved 95.5% expected-tool recall and partially recovered weaker-model performance
 - Free GPT-OSS completed only 12 of 15 tasks because three requests returned no visible structured content
+- Few-shot demonstrations increased Qwen Coder 1.5B router behavior accuracy from 13.3% to 53.3% but reduced safe no-call accuracy from 100% to 25%
+- Few-shot routing improved Gemma 3 safe no-call accuracy from 50% to 75% while slightly reducing exact-call accuracy
+- Few-shot routing recovered Qwen 3 exact-call accuracy from 80% to 93.3%, but did not surpass the 100% single-stage baseline
 
 ### Changed
 
@@ -35,6 +41,8 @@ All notable changes to this project are documented here.
 - Tool-calling metrics separate exact behavior from safe no-call behavior
 - OpenRouter GPT-OSS requests use minimal hidden reasoning where supported
 - Domain benchmark annotation corrected one multi-call label and added canonical enum values
+- DomainToolBench summaries now record the actual intervention condition instead of labeling every run zero-shot
+- Strict mypy now passes across package source, scripts, and tests
 
 ### Fixed
 
@@ -45,8 +53,8 @@ All notable changes to this project are documented here.
 
 ### Planned
 
-- Two-stage behavior router
 - No-tool retrieval threshold and multi-tool-aware retrieval
+- Class-balanced supervised behavior adapter and calibrated fallback
 - Deterministic EvidenceGuard condition
 - Benchmark v1.1 annotation clarifications
 - Repeated-trial and temperature stability study

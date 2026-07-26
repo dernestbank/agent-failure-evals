@@ -383,12 +383,19 @@ Qwen 3 8B provided the strongest accuracy–latency combination on the tested wo
 
 Hosted Gemma 4 26B completed all 15 tasks but remained below local Qwen 3 on routing and exact-call accuracy. The free GPT-OSS 20B endpoint scored strongly on 12 tasks but returned no visible structured content on three tasks, yielding 80% completion reliability. Those missing records were retained as failures rather than manually reconstructed.
 
+### Behavior-router and demonstration ablation
+
+A two-stage architecture separated behavior routing from call generation. Without examples, Qwen Coder 1.5B predicted `clarify` on every task; adding one demonstration per behavior increased behavior accuracy from 13.3% to 53.3%, but safe no-call accuracy fell from 100% to 25% and false calls rose to 20%. Gemma's four-example router improved safe no-call accuracy from 50% to 75% while exact calls fell from 66.7% to 60%. Qwen 3 recovered from 80% to 93.3% exact calls, but its simpler single-stage baseline remained superior at 100% exact calls, 100% safe no-call behavior, and lower latency.
+
+These results show that decomposition and demonstrations can move a failure mode rather than remove it. A conservative router may refuse too often; examples may restore action while also restoring unsafe calls. Prompt-level interventions should therefore be evaluated on execution safety, not only classification accuracy.
+
 ### Architectural implication
 
 The preliminary evidence supports a hybrid architecture:
 
-- Use a strong local router where bounded performance is sufficient.
+- Use the simplest architecture that meets bounded accuracy and safety requirements.
 - Treat safe no-call behavior as a first-class requirement.
+- Validate router interventions separately for each model family and scale.
 - Validate every call deterministically before execution.
 - Measure completion reliability separately from accuracy on surviving outputs.
 - Reserve hosted models as fallback or independent review rather than assuming they are automatically more reliable.

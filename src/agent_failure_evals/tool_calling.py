@@ -43,6 +43,19 @@ class ToolCallingResult(BaseModel):
     clarification: str | None = None
 
 
+class BehaviorDecision(BaseModel):
+    """Stage-one routing decision without executable calls."""
+
+    behavior: ToolBehavior
+    clarification: str | None = None
+
+
+class CallGenerationResult(BaseModel):
+    """Stage-two executable calls after behavior has been fixed."""
+
+    calls: list[ExpectedToolCall] = Field(default_factory=list)
+
+
 @dataclass(frozen=True)
 class ToolCallScore:
     """Deterministic metrics for one predicted call sequence."""

@@ -60,7 +60,8 @@
     "approved_experiments": [
       {
         "experiment_id": "domain-v0.1-qwen3-8b",
-        "catalog_condition": "curated_catalog_zero_shot",
+        "experiment_condition": "curated_catalog_zero_shot",
+        "catalog_condition": "curated_catalog",
         "provider": "ollama",
         "model": "qwen3:8b",
         "attempted_tasks": 15,
@@ -69,7 +70,8 @@
       },
       {
         "experiment_id": "domain-v0.1-gemma3-4b",
-        "catalog_condition": "curated_catalog_zero_shot",
+        "experiment_condition": "curated_catalog_zero_shot",
+        "catalog_condition": "curated_catalog",
         "provider": "ollama",
         "model": "gemma3:4b",
         "attempted_tasks": 15,
@@ -78,7 +80,8 @@
       },
       {
         "experiment_id": "domain-v0.1-qwen25-coder-1.5b",
-        "catalog_condition": "curated_catalog_zero_shot",
+        "experiment_condition": "curated_catalog_zero_shot",
+        "catalog_condition": "curated_catalog",
         "provider": "ollama",
         "model": "qwen2.5-coder:1.5b",
         "attempted_tasks": 15,
@@ -87,7 +90,8 @@
       },
       {
         "experiment_id": "domain-v0.1-qwen25-coder-7b",
-        "catalog_condition": "curated_catalog_zero_shot",
+        "experiment_condition": "curated_catalog_zero_shot",
+        "catalog_condition": "curated_catalog",
         "provider": "ollama",
         "model": "qwen2.5-coder:7b",
         "attempted_tasks": 15,
@@ -96,7 +100,8 @@
       },
       {
         "experiment_id": "domain-v0.1-llama32",
-        "catalog_condition": "curated_catalog_zero_shot",
+        "experiment_condition": "curated_catalog_zero_shot",
+        "catalog_condition": "curated_catalog",
         "provider": "ollama",
         "model": "llama3.2:latest",
         "attempted_tasks": 15,
@@ -105,7 +110,8 @@
       },
       {
         "experiment_id": "domain-v0.1-gpt-oss-20b-free",
-        "catalog_condition": "curated_catalog_zero_shot",
+        "experiment_condition": "curated_catalog_zero_shot",
+        "catalog_condition": "curated_catalog",
         "provider": "openrouter",
         "model": "openai/gpt-oss-20b:free",
         "attempted_tasks": 15,
@@ -114,7 +120,8 @@
       },
       {
         "experiment_id": "domain-v0.1-gemma4-26b-free",
-        "catalog_condition": "curated_catalog_zero_shot",
+        "experiment_condition": "curated_catalog_zero_shot",
+        "catalog_condition": "curated_catalog",
         "provider": "openrouter",
         "model": "google/gemma-4-26b-a4b-it:free",
         "attempted_tasks": 15,
@@ -123,7 +130,8 @@
       },
       {
         "experiment_id": "domain-full-v0-qwen3-8b",
-        "catalog_condition": "full_catalog_zero_shot",
+        "experiment_condition": "full_catalog_zero_shot",
+        "catalog_condition": "full_catalog",
         "provider": "ollama",
         "model": "qwen3:8b",
         "attempted_tasks": 15,
@@ -132,7 +140,8 @@
       },
       {
         "experiment_id": "domain-full-v0-gemma3-4b",
-        "catalog_condition": "full_catalog_zero_shot",
+        "experiment_condition": "full_catalog_zero_shot",
+        "catalog_condition": "full_catalog",
         "provider": "ollama",
         "model": "gemma3:4b",
         "attempted_tasks": 15,
@@ -141,7 +150,8 @@
       },
       {
         "experiment_id": "domain-full-v0-qwen25-coder-1.5b",
-        "catalog_condition": "full_catalog_zero_shot",
+        "experiment_condition": "full_catalog_zero_shot",
+        "catalog_condition": "full_catalog",
         "provider": "ollama",
         "model": "qwen2.5-coder:1.5b",
         "attempted_tasks": 15,
@@ -150,7 +160,8 @@
       },
       {
         "experiment_id": "domain-top3-v0-qwen3-8b",
-        "catalog_condition": "top3_embedding_zero_shot",
+        "experiment_condition": "top3_embedding_zero_shot",
+        "catalog_condition": "top3_embedding",
         "provider": "ollama",
         "model": "qwen3:8b",
         "attempted_tasks": 15,
@@ -159,7 +170,8 @@
       },
       {
         "experiment_id": "domain-top3-v0-gemma3-4b",
-        "catalog_condition": "top3_embedding_zero_shot",
+        "experiment_condition": "top3_embedding_zero_shot",
+        "catalog_condition": "top3_embedding",
         "provider": "ollama",
         "model": "gemma3:4b",
         "attempted_tasks": 15,
@@ -168,7 +180,68 @@
       },
       {
         "experiment_id": "domain-top3-v0-qwen25-coder-1.5b",
-        "catalog_condition": "top3_embedding_zero_shot",
+        "experiment_condition": "top3_embedding_zero_shot",
+        "catalog_condition": "top3_embedding",
+        "provider": "ollama",
+        "model": "qwen2.5-coder:1.5b",
+        "attempted_tasks": 15,
+        "scored_tasks": 15,
+        "infrastructure_failures": 0
+      },
+      {
+        "experiment_id": "domain-router-v0-qwen3-8b",
+        "experiment_condition": "two_stage_behavior_router",
+        "catalog_condition": "curated_catalog",
+        "provider": "ollama",
+        "model": "qwen3:8b",
+        "attempted_tasks": 15,
+        "scored_tasks": 15,
+        "infrastructure_failures": 0
+      },
+      {
+        "experiment_id": "domain-router-v0-gemma3-4b",
+        "experiment_condition": "two_stage_behavior_router",
+        "catalog_condition": "curated_catalog",
+        "provider": "ollama",
+        "model": "gemma3:4b",
+        "attempted_tasks": 15,
+        "scored_tasks": 15,
+        "infrastructure_failures": 0
+      },
+      {
+        "experiment_id": "domain-router-v0-qwen25-coder-1.5b",
+        "experiment_condition": "two_stage_behavior_router",
+        "catalog_condition": "curated_catalog",
+        "provider": "ollama",
+        "model": "qwen2.5-coder:1.5b",
+        "attempted_tasks": 15,
+        "scored_tasks": 15,
+        "infrastructure_failures": 0
+      },
+      {
+        "experiment_id": "domain-router-fewshot-v0-qwen3-8b",
+        "experiment_condition": "two_stage_behavior_router_few_shot",
+        "catalog_condition": "curated_catalog",
+        "provider": "ollama",
+        "model": "qwen3:8b",
+        "attempted_tasks": 15,
+        "scored_tasks": 15,
+        "infrastructure_failures": 0
+      },
+      {
+        "experiment_id": "domain-router-fewshot-v0-gemma3-4b",
+        "experiment_condition": "two_stage_behavior_router_few_shot",
+        "catalog_condition": "curated_catalog",
+        "provider": "ollama",
+        "model": "gemma3:4b",
+        "attempted_tasks": 15,
+        "scored_tasks": 15,
+        "infrastructure_failures": 0
+      },
+      {
+        "experiment_id": "domain-router-fewshot-v0-qwen25-coder-1.5b",
+        "experiment_condition": "two_stage_behavior_router_few_shot",
+        "catalog_condition": "curated_catalog",
         "provider": "ollama",
         "model": "qwen2.5-coder:1.5b",
         "attempted_tasks": 15,
@@ -176,8 +249,8 @@
         "infrastructure_failures": 0
       }
     ],
-    "total_attempted_task_runs": 195,
-    "total_scored_task_runs": 192,
+    "total_attempted_task_runs": 285,
+    "total_scored_task_runs": 282,
     "total_infrastructure_failures": 3,
     "single_run_per_model_condition": true,
     "retrieval": {

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from typing import Any, cast
 
 import pandas as pd
 
@@ -25,7 +26,9 @@ def main() -> None:
         n = max(1, round(len(group) * 0.20))
         # Vary the deterministic seed by group so the same task positions are not
         # selected for every model-condition pair.
-        seed = RANDOM_STATE + index * 997 + sum(ord(ch) for ch in "|".join(key))
+        key_parts = key if isinstance(key, tuple) else (key,)
+        key_text = "|".join(str(part) for part in key_parts)
+        seed = RANDOM_STATE + index * 997 + sum(ord(ch) for ch in key_text)
         samples.append(group.sample(n=min(n, len(group)), random_state=seed))
     audit = pd.concat(samples, ignore_index=True)
     audit = audit.sort_values(["provider", "model", "condition", "category", "task_id"])
@@ -35,15 +38,19 @@ def main() -> None:
         axis=1,
     )
 
-    def scenario_field(row: pd.Series, field: str):
-        payload = json.loads(Path(row["raw_record_path"]).read_text(encoding="utf-8"))
-        return payload["scenario"].get(field, [])
+    def scenario_field(row: pd.Series[Any], field: str) -> str:
+        payload = cast(
+            dict[str, Any],
+            json.loads(Path(str(row["raw_record_path"])).read_text(encoding="utf-8")),
+        )
+        scenario = cast(dict[str, Any], payload["scenario"])
+        return json.dumps(scenario.get(field, []), ensure_ascii=False)
 
     audit["required_evidence"] = audit.apply(
-        lambda row: scenario_field(row, "required_evidence"), axis=1
+        lambda row: scenario_field(row, "required_evidence"), axis="columns"
     )
     audit["success_criteria"] = audit.apply(
-        lambda row: scenario_field(row, "success_criteria"), axis=1
+        lambda row: scenario_field(row, "success_criteria"), axis="columns"
     )
     audit["human_status"] = ""
     audit["human_evidence_complete"] = ""

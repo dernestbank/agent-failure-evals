@@ -5,7 +5,7 @@ from __future__ import annotations
 import csv
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 ROOT = Path(__file__).resolve().parents[1]
 PROCESSED = ROOT / "results" / "processed"
@@ -42,7 +42,8 @@ METRICS = [
 
 
 def load_metrics(experiment_id: str) -> dict[str, Any]:
-    return json.loads((PROCESSED / experiment_id / "metrics.json").read_text(encoding="utf-8"))
+    payload = json.loads((PROCESSED / experiment_id / "metrics.json").read_text(encoding="utf-8"))
+    return cast(dict[str, Any], payload)
 
 
 def pct(value: Any) -> str:

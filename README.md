@@ -165,6 +165,16 @@ Exposing all 13 tools reduced exact-call accuracy for every tested local model:
 
 Automatic top-3 retrieval with local `mxbai-embed-large` achieved 95.5% expected-tool recall. It recovered part of the full-catalog loss for weaker models but did not restore curated-catalog performance or improve their abstention policy.
 
+### Behavior-router and few-shot ablation
+
+A two-stage router first selects `call`, `multi_call`, `clarify`, or `abstain`, then generates calls only when authorized. The zero-shot router was compared with one non-benchmark demonstration per behavior class.
+
+- Qwen Coder 1.5B: behavior accuracy rose from 13.3% to 53.3%, but safe no-call fell from 100% to 25% and false calls rose to 20%.
+- Gemma 3 4B: safe no-call improved from 50% to 75% and false calls fell from 13.3% to 6.7%, while exact calls declined from 66.7% to 60%.
+- Qwen 3 8B: exact calls improved from 80% to 93.3% relative to the zero-shot router, but remained below the 100% single-stage result and required higher latency.
+
+The result is model-dependent: decomposition and examples can trade conservatism, execution accuracy, and unsafe action rather than improving all dimensions together.
+
 See:
 
 - `report/domain_toolbench_technical_report_v0_1.md`
@@ -174,6 +184,7 @@ See:
 - `docs/local_tool_calling_training_curriculum.md`
 - `results/public/domain_tool_calling_baselines.md`
 - `results/public/domain_retrieval_ablation.md`
+- `results/public/domain_router_ablation.md`
 
 ### Run DomainToolBench
 
@@ -200,6 +211,19 @@ agent-evals run-tool-benchmark ollama qwen3:8b `
   --experiment-id my-top3-run `
   --benchmark-path tasks\domain_tool_calling_top3_mxbai_v0.jsonl `
   --condition top3_embedding_zero_shot
+```
+
+Two-stage behavior router:
+
+```powershell
+agent-evals run-tool-router ollama qwen3:8b `
+  --experiment-id my-router-zero-shot
+
+agent-evals run-tool-router ollama qwen3:8b `
+  --experiment-id my-router-few-shot `
+  --few-shot
+
+python scripts\build_router_ablation.py
 ```
 
 ## Installation

@@ -28,6 +28,24 @@ CONDITIONS = {
         "domain-top3-v0-gemma3-4b",
         "domain-top3-v0-qwen25-coder-1.5b",
     ],
+    "two_stage_behavior_router": [
+        "domain-router-v0-qwen3-8b",
+        "domain-router-v0-gemma3-4b",
+        "domain-router-v0-qwen25-coder-1.5b",
+    ],
+    "two_stage_behavior_router_few_shot": [
+        "domain-router-fewshot-v0-qwen3-8b",
+        "domain-router-fewshot-v0-gemma3-4b",
+        "domain-router-fewshot-v0-qwen25-coder-1.5b",
+    ],
+}
+
+CATALOG_CONDITION = {
+    "curated_catalog_zero_shot": "curated_catalog",
+    "full_catalog_zero_shot": "full_catalog",
+    "top3_embedding_zero_shot": "top3_embedding",
+    "two_stage_behavior_router": "curated_catalog",
+    "two_stage_behavior_router_few_shot": "curated_catalog",
 }
 
 
@@ -55,7 +73,8 @@ def main() -> None:
             records.append(
                 {
                     "experiment_id": experiment_id,
-                    "catalog_condition": condition,
+                    "experiment_condition": condition,
+                    "catalog_condition": CATALOG_CONDITION[condition],
                     "provider": experiment_manifest["provider"],
                     "model": experiment_manifest["model"],
                     "attempted_tasks": attempted,

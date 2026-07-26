@@ -5,7 +5,6 @@ from agent_failure_evals.schemas.models import AgentResult, Scenario
 def test_false_success_is_detected() -> None:
     scenario = Scenario(
         task_id="missing-input-001",
-        base_task_id="base-001",
         category="missing_required_input",
         user_request="Calculate an impact without a functional unit.",
         expected_status="cannot_complete",

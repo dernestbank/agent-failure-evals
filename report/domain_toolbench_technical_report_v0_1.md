@@ -276,6 +276,23 @@ Full-catalog exposure reduced exact-call accuracy for all three models. Top-3 re
 
 These findings show that retrieval must be evaluated as part of the agent system rather than assumed to be beneficial. Multi-tool recall, irrelevant retrieved tools, and no-tool thresholding can dominate end-to-end performance.
 
+### 7.9 Behavior-router and balanced few-shot ablation
+
+A two-stage architecture separated behavior selection from call generation. Stage one selected `call`, `multi_call`, `clarify`, or `abstain`; stage two generated executable calls only after an authorized call decision. The zero-shot router was compared with a four-example router containing one non-benchmark demonstration for each behavior class.
+
+| Model | Router condition | Behavior | Exact calls | Tool selection | Arg recall | Safe no-call | False calls | Latency |
+|---|---|---:|---:|---:|---:|---:|---:|---:|
+| Qwen Coder 1.5B | Zero-shot | 13.3% | 26.7% | 26.7% | 26.7% | 100% | 0% | 0.67s |
+| Qwen Coder 1.5B | Four-example | 53.3% | 26.7% | 56.7% | 76.7% | 25% | 20% | 4.03s |
+| Gemma 3 4B | Zero-shot | 60.0% | 66.7% | 80.0% | 91.1% | 50% | 13.3% | 3.46s |
+| Gemma 3 4B | Four-example | 60.0% | 60.0% | 73.3% | 77.8% | 75% | 6.7% | 3.39s |
+| Qwen 3 8B | Zero-shot | 80.0% | 80.0% | 80.0% | 86.7% | 75% | 6.7% | 3.34s |
+| Qwen 3 8B | Four-example | 93.3% | 93.3% | 93.3% | 100% | 75% | 6.7% | 3.77s |
+
+The 1.5B zero-shot router collapsed to `clarify` on all tasks. Balanced examples broke that collapse and increased behavior accuracy by 40 percentage points, but they also reintroduced unsafe execution. Gemma gained no-call safety while losing some exact-call accuracy. Qwen recovered most of the two-stage accuracy loss, yet its original single-stage condition remained more accurate, safer, and faster at 100% exact calls, 100% safe no-call behavior, and 2.35-second mean latency.
+
+The intervention is therefore model-dependent. Decomposition can shift a failure mode rather than remove it, and few-shot examples can exchange conservatism for unsafe action. Router quality must be evaluated jointly on classification, execution accuracy, no-call safety, and latency.
+
 ## 8. Main findings
 
 ### Finding 1 — The best local model can outperform free hosted alternatives on a bounded seed
@@ -300,6 +317,10 @@ The local 1.5B and Gemma 3 models frequently called tools on tasks requiring no 
 
 The first Qwen tool-calling pilot failed all tasks because the provider adapter accidentally constrained the model to the previous experiment’s result schema. GPT-OSS later failed three tasks because the endpoint returned no visible content. Tool-calling evaluation must audit the full provider and parsing stack.
 
+### Finding 6 — Decomposition and demonstrations do not improve safety monotonically
+
+The two-stage router improved some capabilities while degrading others. Few-shot examples repaired the 1.5B model's classification collapse but reduced safe no-call behavior; they made Gemma safer but slightly less accurate; and they helped Qwen's router without surpassing its simpler single-stage baseline. Architectural interventions require model-specific ablations rather than universal assumptions.
+
 ## 9. Planned intervention experiments
 
 ### 9.1 Retrieval improvements
@@ -311,11 +332,22 @@ The first full-catalog and top-3 retrieval ablation is complete. Next retrieval 
 - Multi-tool coverage-aware retrieval
 - Hybrid lexical and embedding retrieval
 - Domain-filtered retrieval before semantic ranking
-- A separate behavior router before tool retrieval
+- A no-tool gate before tool retrieval
 
 The current result suggests that retrieval reduces catalog load but cannot fix unsafe call policy or compensate for a missing required tool.
 
-### 9.2 Prompt and schema ablations
+### 9.2 Behavior-router follow-up
+
+The initial zero-shot and four-example router ablation is complete. Next tests should include:
+
+- Class-balanced supervised adaptation rather than prompt-only demonstrations
+- Confidence calibration and selective fallback
+- A binary no-call gate before four-way routing
+- Independent routing and call-generation models
+- Cost-sensitive training that penalizes unsafe calls more heavily than clarification errors
+- Repeated trials to distinguish stable policy changes from single-run variance
+
+### 9.3 Prompt and schema ablations
 
 Compare:
 
@@ -326,11 +358,11 @@ Compare:
 - Narrow versus broad tools
 - One versus three domain examples
 
-### 9.3 Execution feedback
+### 9.4 Execution feedback
 
 Execute calls in a deterministic mock environment and provide structured errors. Measure first-call success, repair success, regressions, and loop behavior.
 
-### 9.4 Domain adaptation
+### 9.5 Domain adaptation
 
 Train a QLoRA checkpoint on verified examples emphasizing:
 
@@ -341,7 +373,7 @@ Train a QLoRA checkpoint on verified examples emphasizing:
 - Sequence stopping
 - Argument canonicalization
 
-### 9.5 Live MCP evaluation
+### 9.6 Live MCP evaluation
 
 Replace provisional schemas with versioned live tool manifests and execute sandboxed workflows against openLCA-MCP, green-hydrogen TEA, and BioFlow Studio.
 
@@ -367,8 +399,11 @@ Repository components:
 - `src/agent_failure_evals/tool_calling.py`
 - `src/agent_failure_evals/tool_calling_experiment.py`
 - `src/agent_failure_evals/tool_calling_analysis.py`
+- `src/agent_failure_evals/tool_calling_router_experiment.py`
 - `scripts/build_domain_tool_matrix.py`
+- `scripts/build_router_ablation.py`
 - `results/public/domain_tool_calling_baselines.csv`
+- `results/public/domain_router_ablation.csv`
 
 Raw responses remain excluded from the public repository until privacy and licensing review.
 

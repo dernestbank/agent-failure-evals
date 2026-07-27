@@ -239,6 +239,38 @@ def main() -> None:
             "not_run_exact_deployed_descriptions_and_live_backend_unavailable"
         ),
     }
+    hardening_summary = json.loads(
+        (ROOT / "manifests" / "openlca_mcp_schema_drift_hardened_summary.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    manifest["openlca_mcp_schema_hardening"] = {
+        "branch": "research/schema-contract-hardening",
+        "before_source_commit": drift_summary["source_commit"],
+        "after_source_commit": hardening_summary["source_commit"],
+        "before_version_consistent": drift_summary["source_version_consistent"],
+        "after_version_consistent": hardening_summary["source_version_consistent"],
+        "before_shared_interface_drift_tools": drift_summary["status_counts"].get(
+            "shared_interface_drift", 0
+        ),
+        "after_shared_interface_drift_tools": hardening_summary["status_counts"].get(
+            "shared_interface_drift", 0
+        ),
+        "before_schema_constraint_drift_tools": drift_summary["tools_with_schema_constraint_drift"],
+        "after_schema_constraint_drift_tools": hardening_summary[
+            "tools_with_schema_constraint_drift"
+        ],
+        "resolved_tools": [
+            "analyze_contributions",
+            "get_entity_by_name",
+            "get_inventory_results",
+            "search_flows",
+        ],
+        "introduced_drift_tools": [],
+        "source_test_status": "63_passed",
+        "deployment_changed": False,
+        "live_backend_tested": False,
+    }
     manifest["public_reports"] = [
         "report/technical_report_v0_1.md",
         "report/domain_toolbench_technical_report_v0_1.md",
@@ -247,6 +279,7 @@ def main() -> None:
         "report/binary_call_gate_stability_note.md",
         "report/deterministic_tool_call_guard_note.md",
         "report/openlca_mcp_schema_drift_note.md",
+        "report/openlca_mcp_schema_hardening_note.md",
     ]
     MANIFEST_PATH.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(

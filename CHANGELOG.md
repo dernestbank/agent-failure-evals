@@ -30,6 +30,7 @@ All notable changes to this project are documented here.
 - Deterministic ToolCallGuard technical note
 - Versioned local FastMCP and connector-visible OpenLCA-MCP manifests
 - Source-to-connector schema drift comparison and technical note
+- OpenLCA-MCP schema-hardening before/after report and technical note
 - Paired 20-task OpenLCA source and connector schema benchmarks
 - Three source-only `check_result_consistency` extension tasks
 - Surgical DomainToolBench task-repair utility and repair log
@@ -55,6 +56,8 @@ All notable changes to this project are documented here.
 - Local OpenLCA-MCP source exposes 25 tools versus 24 connector-visible tools
 - `check_result_consistency` is source-only, while `create_product_system` adds three local client-visible parameters
 - Six shared OpenLCA tools differ in schema constraints and local version metadata disagrees between 0.4.1 and 0.4.0
+- Source hardening aligned version metadata and reduced schema-constraint drift from six tools to two
+- Drift was resolved for `analyze_contributions`, `get_entity_by_name`, `get_inventory_results`, and `search_flows` without introducing new drift
 
 ### Changed
 
@@ -69,6 +72,7 @@ All notable changes to this project are documented here.
 - Guard sanitization now blocks calls when explicitly requested values are invalid instead of deleting them and executing defaults
 - Grounded numeric strings and number words can be canonically converted to schema-compatible numeric values
 - Domain tool-calling tasks can now record manifest identity, commit, schema source, and execution mode
+- OpenLCA-MCP source branch `research/schema-contract-hardening` adds machine-enforced enums, cutoff range, and typed process exchanges
 
 ### Fixed
 

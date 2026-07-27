@@ -218,6 +218,20 @@ The repository now contains:
 
 No model comparison has been run on these paired benchmarks. The connector snapshot preserves exact tool names and parameter schemas, but its descriptions are concise connector-derived representations rather than a fresh authenticated direct `tools/list` payload.
 
+### OpenLCA-MCP schema hardening
+
+A separate source branch, `research/schema-contract-hardening`, applied contract-level fixes and passed all 63 OpenLCA-MCP tests.
+
+- Runtime/package version consistency: **false → true**
+- Shared interface-drift tools: **8 → 4**
+- Schema-constraint drift tools: **6 → 2**
+- Resolved drift: `analyze_contributions`, `get_entity_by_name`, `get_inventory_results`, `search_flows`
+- Introduced drift: none
+
+The branch adds machine-enforced enums, a 0–1 cutoff range, and a closed Pydantic process-exchange schema while preserving existing handler interfaces. Remaining differences are source-only functionality, expanded product-system controls, default representation, and a generic comparison-data object.
+
+No connector deployment or live backend was changed.
+
 See:
 
 - `report/domain_toolbench_technical_report_v0_1.md`
@@ -237,6 +251,9 @@ See:
 - `results/public/openlca_mcp_schema_drift.md`
 - `manifests/openlca_mcp_fastmcp_source_4865b2b.json`
 - `manifests/openlca_mcp_connector_visible_2026-07-26.json`
+- `report/openlca_mcp_schema_hardening_note.md`
+- `results/public/openlca_mcp_schema_hardening_delta.md`
+- `manifests/openlca_mcp_fastmcp_source_b316008.json`
 
 ### Run DomainToolBench
 
@@ -325,6 +342,14 @@ python scripts\build_openlca_mcp_versioned_benchmarks.py `
   manifests\openlca_mcp_fastmcp_source_4865b2b.json `
   manifests\openlca_mcp_connector_visible_2026-07-26.json `
   .
+
+python scripts\build_openlca_mcp_hardening_report.py `
+  manifests\openlca_mcp_schema_drift_summary.json `
+  results\public\openlca_mcp_schema_drift.csv `
+  manifests\openlca_mcp_schema_drift_hardened_summary.json `
+  results\public\openlca_mcp_schema_drift_hardened.csv `
+  results\public\openlca_mcp_schema_hardening_delta.csv `
+  results\public\openlca_mcp_schema_hardening_delta.md
 ```
 
 ## Installation

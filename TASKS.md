@@ -62,6 +62,7 @@
 - [x] Commit and push binary-gate stability milestone (`e16a678`)
 - [x] Commit and push deterministic ToolCallGuard milestone (`0ce2c40`)
 - [x] Commit and push OpenLCA-MCP schema audit milestone (`5e4d16c`)
+- [ ] Commit and push OpenLCA-MCP schema-hardening delta milestone
 - [ ] Review GitHub rendering and links
 - [ ] Tag v0.2.0 only after human confirmation
 
@@ -114,7 +115,10 @@
 - [x] Build paired 20-task source and connector schema benchmarks
 - [x] Build three source-only consistency tasks
 - [ ] Fetch a fresh authenticated deployed `tools/list` manifest when permitted
-- [ ] Run paired model comparison only after exact deployed descriptions are available
+- [x] Harden local source schemas on branch `research/schema-contract-hardening` (`b316008`)
+- [x] Measure source hardening against the pinned connector snapshot
+- [ ] Run before/after source-schema model ablation
+- [ ] Run source-versus-deployed model comparison only after exact deployed descriptions are available
 - [ ] Replace provisional cross-domain tools with versioned live TEA and BioFlow schemas
 - [ ] Expand to 40 expert-authored OpenLCA tasks
 - [ ] Add held-out intent and held-out tool splits
@@ -172,6 +176,7 @@
 - [x] Binary Call Gate stability technical note
 - [x] Deterministic ToolCallGuard technical note
 - [x] OpenLCA-MCP schema drift technical note
+- [x] OpenLCA-MCP schema hardening technical note
 - [x] Structured Outputs Are Not Enough engineering note draft
 - [x] Local tool-calling training curriculum
 - [ ] SDAI Labs research landing page

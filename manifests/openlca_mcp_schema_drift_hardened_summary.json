@@ -1,0 +1,28 @@
+{
+  "source_tool_count": 25,
+  "connector_tool_count": 24,
+  "shared_tool_count": 24,
+  "source_only_tools": [
+    "check_result_consistency"
+  ],
+  "connector_only_tools": [],
+  "status_counts": {
+    "shared_no_client_surface_drift": 20,
+    "source_only": 1,
+    "shared_interface_drift": 4
+  },
+  "tools_with_hidden_connection_parameter": 23,
+  "tools_with_client_parameter_name_drift": 1,
+  "tools_with_schema_constraint_drift": 2,
+  "source_package_version_pyproject": "0.4.1",
+  "source_runtime_version_module": "0.4.1",
+  "source_version_consistent": true,
+  "source_commit": "b31600823cdcfc8509b9f66b889997c1d97965cd",
+  "connector_deployed_version": null,
+  "connector_health": {
+    "health_probe": "failed",
+    "health_probe_error": "HTTP 502 upstream or external service error",
+    "schema_available": true,
+    "live_openlca_execution": false
+  }
+}

@@ -262,6 +262,15 @@ def _markdown(rows: list[dict[str, Any]], summary: dict[str, Any]) -> str:
             f"{row['source_only_client_parameters'] or 'none'} | "
             f"{row['connector_only_parameters'] or 'none'} | {details or 'none'} |"
         )
+    version_statement = (
+        "4. Local package and runtime version metadata are consistent."
+        if summary["source_version_consistent"]
+        else (
+            "4. Local version metadata are internally inconsistent: "
+            f"`{summary['source_package_version_pyproject']}` in package metadata versus "
+            f"`{summary['source_runtime_version_module']}` at runtime."
+        )
+    )
     lines.extend(
         [
             "",
@@ -269,8 +278,8 @@ def _markdown(rows: list[dict[str, Any]], summary: dict[str, Any]) -> str:
             "",
             "1. The local source is ahead of the connector-visible surface: it adds `check_result_consistency` and additional `create_product_system` options.",
             "2. The connector hides the local `connection` routing parameter from the user-visible tool surface.",
-            "3. Several connector schemas expose stricter enums or nested exchange fields than the local Python annotations generate, indicating deployed-version drift or schema-generation differences.",
-            "4. Local version metadata is internally inconsistent (`0.4.1` package metadata versus `0.4.0` runtime constant).",
+            "3. Remaining schema differences reflect source-to-deployment drift or different schema-generation choices; directionality must be evaluated per parameter rather than assumed.",
+            version_statement,
             "5. Live behavior could not be compared because the connector health probe returned HTTP 502.",
             "6. The source and connector manifests remain separate artifacts and are not silently merged.",
             "",

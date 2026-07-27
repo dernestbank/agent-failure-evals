@@ -588,7 +588,8 @@
     "report/engineering_note_structured_outputs.md",
     "report/binary_call_gate_stability_note.md",
     "report/deterministic_tool_call_guard_note.md",
-    "report/openlca_mcp_schema_drift_note.md"
+    "report/openlca_mcp_schema_drift_note.md",
+    "report/openlca_mcp_schema_hardening_note.md"
   ],
   "openlca_mcp_schema_audit": {
     "local_source_commit": "4865b2b997f32352bbc01988fee3fb74a1733db1",
@@ -616,5 +617,26 @@
     "connector_common_tasks": 20,
     "source_only_extension_tasks": 3,
     "model_comparison_status": "not_run_exact_deployed_descriptions_and_live_backend_unavailable"
+  },
+  "openlca_mcp_schema_hardening": {
+    "branch": "research/schema-contract-hardening",
+    "before_source_commit": "4865b2b997f32352bbc01988fee3fb74a1733db1",
+    "after_source_commit": "b31600823cdcfc8509b9f66b889997c1d97965cd",
+    "before_version_consistent": false,
+    "after_version_consistent": true,
+    "before_shared_interface_drift_tools": 8,
+    "after_shared_interface_drift_tools": 4,
+    "before_schema_constraint_drift_tools": 6,
+    "after_schema_constraint_drift_tools": 2,
+    "resolved_tools": [
+      "analyze_contributions",
+      "get_entity_by_name",
+      "get_inventory_results",
+      "search_flows"
+    ],
+    "introduced_drift_tools": [],
+    "source_test_status": "63_passed",
+    "deployment_changed": false,
+    "live_backend_tested": false
   }
 }

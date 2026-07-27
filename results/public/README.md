@@ -27,6 +27,8 @@ This directory contains sanitized aggregate outputs from the approved v0.2.0 exp
 - `domain_tool_guard_stability_tasks.csv` — sanitized task-level proposal and guard outcomes
 - `domain_tool_guard_stability.md` — readable repeated-study summary
 - `openlca_mcp_schema_drift.csv` / `.md` — local-source versus connector-visible contract audit
+- `openlca_mcp_schema_drift_hardened.csv` / `.md` — hardened source versus connector audit
+- `openlca_mcp_schema_hardening_delta.csv` / `.md` — before/after remediation comparison
 
 ## Excluded
 
@@ -56,4 +58,6 @@ The ToolCallGuard stability study uses the 15-task top-three retrieval set, thre
 
 The OpenLCA-MCP schema audit compares a local FastMCP-generated source manifest at commit `4865b2b` with the connector-visible schema captured on July 26, 2026. The connector health probe failed with HTTP 502, and no live behavior comparison was made. Source and connector manifests remain separate.
 
-All results are preliminary, not peer reviewed, and apply only to the tested prompts, model identifiers, providers, catalog conditions, schemas, and controlled tasks.
+The schema-hardening delta compares source commits `4865b2b` and `b316008` against the same pinned connector snapshot. It measures source contract remediation only; the deployed connector and live backend were not changed.
+
+All results are preliminary, not peer reviewed, and apply only to the tested prompts, model identifiers, providers, catalog conditions, schemas, source commits, and controlled tasks.

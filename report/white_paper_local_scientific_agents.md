@@ -409,6 +409,22 @@ The remaining failures exposed the boundary of deterministic post-processing. Th
 
 The exploratory 0.60 no-tool threshold perfectly separated the current two abstention tasks from the 13 relevant-tool tasks, but it was selected after inspecting the seed and requires held-out calibration.
 
+### Machine-enforced OpenLCA schema hardening
+
+A source-level ablation tested whether stronger generated tool contracts improve local-model proposals. Twenty identical OpenLCA intents were rendered against source commits `4865b2b` and `b316008`. Three local models were evaluated with three seeds at temperature 0.2, producing 360 before/after task runs. A second 180-run replay of the unchanged before surface estimated local inference variability.
+
+| Model | Raw exact-call delta | Replay-adjusted delta | Expected-tool schema delta |
+|---|---:|---:|---:|
+| Qwen Coder 1.5B | 0.0 pp | 0.0 pp | 0.0 pp |
+| Gemma 3 4B | +10.0 pp | +6.7 pp | +16.7 pp |
+| Qwen 3 8B | +11.7 pp | +10.0 pp | +33.3 pp |
+
+The retained effects were interpretable and repeated across all three seeds. Qwen 3 used enum-valid `Process` rather than lowercase `process` and supplied `flow_type=PRODUCT_FLOW` only under the hardened schema. Gemma reduced a redundant inventory sequence to one call containing `direction=output`. The unchanged-schema replay reproduced a separate health-check improvement, demonstrating why runtime variation must be measured rather than credited to schema design.
+
+The 1.5B model did not benefit. Better contracts can guide a model that already has adequate routing capacity, but they do not replace that capacity. Gemma also retained an incorrect top-level behavior label even when its call sequence became exact.
+
+This study remains contract-level. No proposal was executed in openLCA, only six intents changed the expected-call tool schema, and repeated seeds are not independent samples.
+
 ### Architectural implication
 
 The preliminary evidence supports a hybrid architecture:

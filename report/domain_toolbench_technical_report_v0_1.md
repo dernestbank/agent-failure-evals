@@ -329,6 +329,28 @@ Sanitization preserved every already exact proposal and captured every unsafe pr
 
 The 0.60 retrieval threshold was selected after inspecting the current seed and is exploratory rather than held-out or preregistered. The result supports deterministic validation as an execution boundary while preserving the distinction between filtered outputs and improved model reasoning. See `report/deterministic_tool_call_guard_note.md` for the full study.
 
+### 7.12 OpenLCA-MCP source-schema hardening ablation
+
+A source-level contract intervention compared OpenLCA-MCP commit `4865b2b` with hardened commit `b316008`. Twenty identical OpenLCA intents were rendered against both generated source manifests. Qwen Coder 1.5B, Gemma 3 4B, and Qwen 3 8B were each evaluated with seeds 101, 202, and 303 at temperature 0.2, yielding 360 before/after task runs and no infrastructure failures.
+
+| Model | Exact before | Exact after | Raw delta | Replay exact | Replay-adjusted delta | Expected-tool schema delta |
+|---|---:|---:|---:|---:|---:|---:|
+| Qwen Coder 1.5B | 6.7% | 6.7% | 0.0 pp | 6.7% | 0.0 pp | 0.0 pp |
+| Gemma 3 4B | 10.0% | 20.0% | +10.0 pp | 13.3% | **+6.7 pp** | **+16.7 pp** |
+| Qwen 3 8B | 48.3% | 60.0% | +11.7 pp | 50.0% | **+10.0 pp** | **+33.3 pp** |
+
+A 180-run replay of the unchanged before surface estimated background inference variation. Exact-status agreement between original and replay was 100.0% for Qwen Coder, 96.7% for Gemma, and 98.3% for Qwen 3. On the six expected-tool-changed tasks, before/replay full-result identity was 100% for every model.
+
+The retained effects had direct contract mechanisms:
+
+- Qwen 3 changed `model_type` from invalid lowercase `process` to enum-valid `Process` in all three seeds.
+- Qwen 3 supplied `flow_type=PRODUCT_FLOW` only under the hardened schema in all three seeds.
+- Gemma reduced a redundant two-call inventory proposal to the one requested `direction=output` call in all three seeds.
+
+Qwen Coder 1.5B showed no benchmark-level benefit. Gemma's inventory call sequence improved, but its top-level behavior label remained incorrect, illustrating that contract quality can improve arguments and sequence without repairing behavior classification.
+
+These findings are preliminary. Only six task intents changed the expected-call tool schema, repeated seeds are not independent, and no call was executed in openLCA. See `report/openlca_mcp_schema_hardening_model_ablation_note.md` and `results/public/openlca_schema_replay_control.md`.
+
 ## 8. Main findings
 
 ### Finding 1 — The best local model can outperform free hosted alternatives on a bounded seed
@@ -360,6 +382,10 @@ The two-stage router improved some capabilities while degrading others. Few-shot
 ### Finding 7 — Deterministic validation can contain errors that prompting does not
 
 The ToolCallGuard preserved every already exact proposal, captured every unsafe proposal, and substantially improved usable call accuracy without another model decision. The gains came from transparent filtering and validation, not improved reasoning. Retrieval and model capability still bounded what the system could recover.
+
+### Finding 8 — Machine-readable constraints can change model proposals directly
+
+Enum-backed OpenLCA schemas produced consistent argument corrections for Qwen 3 across all tested seeds, and a direction enum reduced Gemma's redundant call sequence. A same-schema replay control was necessary to distinguish these effects from local inference variation. Stronger schemas did not rescue the 1.5B model's broader routing weakness.
 
 ## 9. Planned intervention experiments
 
@@ -401,14 +427,18 @@ The first ToolCallGuard ablation and three-seed stability study are complete. Ne
 
 ### 9.4 Prompt and schema ablations
 
-Compare:
+The first before/after generated-schema ablation is complete. It found direct enum-related gains for Qwen 3 and a sequence reduction for Gemma, with no benefit for Qwen Coder 1.5B. The same-schema replay control also showed that identical seeds do not guarantee identical local outputs.
 
-- Verbose descriptions
-- Compressed descriptions
-- Explicit enums
-- Explicit units
+Next comparisons should isolate one contract change at a time:
+
+- Enum-only versus unconstrained strings
+- Range-only versus unconstrained numbers
+- Closed versus permissive nested objects
+- Verbose descriptions versus compressed descriptions
+- Explicit units versus prose-only units
 - Narrow versus broad tools
 - One versus three domain examples
+- Temperature-zero replay versus temperature-0.2 replay
 
 ### 9.5 Execution feedback
 
@@ -458,9 +488,15 @@ Repository components:
 - `scripts/build_router_ablation.py`
 - `scripts/build_retrieval_threshold_sweep.py`
 - `scripts/build_tool_guard_stability_report.py`
+- `scripts/run_openlca_schema_hardening_matrix.py`
+- `scripts/build_openlca_schema_hardening_model_report.py`
+- `scripts/run_openlca_schema_replay_control.py`
+- `scripts/build_openlca_schema_replay_report.py`
 - `results/public/domain_tool_calling_baselines.csv`
 - `results/public/domain_router_ablation.csv`
 - `results/public/domain_tool_guard_stability_aggregate.csv`
+- `results/public/openlca_schema_hardening_model_ablation.md`
+- `results/public/openlca_schema_replay_control.md`
 
 Raw responses remain excluded from the public repository until privacy and licensing review.
 
@@ -472,4 +508,4 @@ AI assistants supported code generation, debugging, documentation, literature di
 
 This seed study demonstrates that strong domain-specific tool calling is possible with a locally hosted 8B model under a bounded scientific tool catalog. It also shows why average function-call accuracy is insufficient: behavior collapse, false calls, abstention failures, provider completion failures, and latency can materially change deployment decisions.
 
-The next research phase should test whether retrieval, simplified schemas, verified examples, constrained output, and QLoRA adaptation can improve weaker local models while preserving the privacy and cost advantages of local execution.
+The next research phase should test whether single-constraint schema ablations, retrieval, verified examples, constrained output, execution feedback, and QLoRA adaptation can improve weaker local models while preserving the privacy and cost advantages of local execution.

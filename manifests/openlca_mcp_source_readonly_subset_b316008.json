@@ -1,0 +1,422 @@
+{
+  "manifest_id": "openlca-mcp-source-b316008",
+  "schema_source": "fastmcp_generated_hardened_source",
+  "source_commit": "b31600823cdcfc8509b9f66b889997c1d97965cd",
+  "connector_deployed_version": null,
+  "execution_status": {
+    "manifest_export": "FastMCP registration imported locally",
+    "openlca_ipc_contacted": false,
+    "live_openlca_execution": "not_tested_by_exporter"
+  },
+  "tool_count": 13,
+  "tool_names": [
+    "analyze_contributions",
+    "calculate_impacts",
+    "compare_systems",
+    "dispose_result",
+    "find_providers",
+    "get_entity_by_name",
+    "get_inventory_results",
+    "get_total_requirements",
+    "health_check",
+    "search_flows",
+    "search_impact_methods",
+    "search_processes",
+    "test_connection"
+  ],
+  "tools": [
+    {
+      "name": "analyze_contributions",
+      "description": "Identify which processes (or flows) contribute most to an impact category \u2014 the hotspots. Requires result_id and impact_category_id (from calculate_impacts' impacts). Returns top contributors with share and absolute amount.",
+      "parameters": {
+        "additionalProperties": false,
+        "properties": {
+          "result_id": {
+            "type": "string"
+          },
+          "impact_category_id": {
+            "type": "string"
+          },
+          "n": {
+            "default": 10,
+            "type": "integer"
+          },
+          "contribution_type": {
+            "default": "process",
+            "enum": [
+              "process",
+              "flow"
+            ],
+            "type": "string"
+          },
+          "min_share": {
+            "default": 0.0,
+            "type": "number"
+          }
+        },
+        "required": [
+          "result_id",
+          "impact_category_id"
+        ],
+        "type": "object"
+      },
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state."
+    },
+    {
+      "name": "calculate_impacts",
+      "description": "Calculate environmental impacts for a product system. Returns a result_id, a compact ResultSummary (top impacts, suggested next actions), the full impact list, and any consistency warnings. IMPORTANT: call dispose_result when done with the result_id.",
+      "parameters": {
+        "additionalProperties": false,
+        "properties": {
+          "system_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "system_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "method_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "method_keywords": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "amount": {
+            "default": 1.0,
+            "type": "number"
+          }
+        },
+        "type": "object"
+      },
+      "risk_class": "read_only_stateful_compute",
+      "operational_effect": "Creates or computes temporary analysis state."
+    },
+    {
+      "name": "compare_systems",
+      "description": "Compare two product systems on the same impact method. Returns per-category system1, system2, difference, and percent change. Runs and disposes both calculations internally (no result_id needed).",
+      "parameters": {
+        "additionalProperties": false,
+        "properties": {
+          "system1_id": {
+            "type": "string"
+          },
+          "system2_id": {
+            "type": "string"
+          },
+          "method_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "method_keywords": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "amount": {
+            "default": 1.0,
+            "type": "number"
+          }
+        },
+        "required": [
+          "system1_id",
+          "system2_id"
+        ],
+        "type": "object"
+      },
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state."
+    },
+    {
+      "name": "dispose_result",
+      "description": "Dispose a calculation result to free server memory. Always call this when finished with a result_id from calculate_impacts.",
+      "parameters": {
+        "additionalProperties": false,
+        "properties": {
+          "result_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "result_id"
+        ],
+        "type": "object"
+      },
+      "risk_class": "result_store_cleanup",
+      "operational_effect": "Deletes temporary calculation results from server memory."
+    },
+    {
+      "name": "find_providers",
+      "description": "Find all processes that produce a given flow. Provide flow_id (preferred) or flow_name. Use after search_flows to identify production processes for linking.",
+      "parameters": {
+        "additionalProperties": false,
+        "properties": {
+          "flow_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "flow_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "type": "object"
+      },
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state."
+    },
+    {
+      "name": "get_entity_by_name",
+      "description": "Exact-name lookup of a single entity. Faster and more precise than keyword search when you know the exact name. Returns a compact {id, name, type, category} summary.",
+      "parameters": {
+        "additionalProperties": false,
+        "properties": {
+          "model_type": {
+            "enum": [
+              "Flow",
+              "Process",
+              "ImpactMethod",
+              "ProductSystem",
+              "FlowProperty",
+              "Unit"
+            ],
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "model_type",
+          "name"
+        ],
+        "type": "object"
+      },
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state."
+    },
+    {
+      "name": "get_inventory_results",
+      "description": "Get the life cycle inventory (elementary/environmental flows) for a calculated result. Requires result_id from calculate_impacts. direction filters input/output/both.",
+      "parameters": {
+        "additionalProperties": false,
+        "properties": {
+          "result_id": {
+            "type": "string"
+          },
+          "direction": {
+            "default": "both",
+            "enum": [
+              "input",
+              "output",
+              "both"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "result_id"
+        ],
+        "type": "object"
+      },
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state."
+    },
+    {
+      "name": "get_total_requirements",
+      "description": "Get the total requirements (scaled technology flows) of a calculated product system: which processes run and at what amount. Requires result_id.",
+      "parameters": {
+        "additionalProperties": false,
+        "properties": {
+          "result_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "result_id"
+        ],
+        "type": "object"
+      },
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state."
+    },
+    {
+      "name": "health_check",
+      "description": "Health probe for the openLCA connection: whether the server is reachable and how much data the active database holds. Set count_entities=false to skip the counts.",
+      "parameters": {
+        "additionalProperties": false,
+        "properties": {
+          "count_entities": {
+            "default": true,
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state."
+    },
+    {
+      "name": "search_flows",
+      "description": "Search for material flows in the openLCA database. Keywords are case-insensitive and use partial matching (all keywords must be present). Example: keywords=['steel','hot','rolled'] finds 'Steel, hot rolled, coil'.",
+      "parameters": {
+        "additionalProperties": false,
+        "properties": {
+          "keywords": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "max_results": {
+            "default": 10,
+            "type": "integer"
+          },
+          "flow_type": {
+            "anyOf": [
+              {
+                "enum": [
+                  "PRODUCT_FLOW",
+                  "ELEMENTARY_FLOW",
+                  "WASTE_FLOW"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "keywords"
+        ],
+        "type": "object"
+      },
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state."
+    },
+    {
+      "name": "search_impact_methods",
+      "description": "Search for LCIA methods (TRACI, ReCiPe, CML, ILCD, EF, ...). Returns the matched method with its impact categories (id + name).",
+      "parameters": {
+        "additionalProperties": false,
+        "properties": {
+          "keywords": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "keywords"
+        ],
+        "type": "object"
+      },
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state."
+    },
+    {
+      "name": "search_processes",
+      "description": "Search for processes (production, transport, ...) in the openLCA database. Keywords are case-insensitive with partial matching (all must match).",
+      "parameters": {
+        "additionalProperties": false,
+        "properties": {
+          "keywords": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "max_results": {
+            "default": 10,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "keywords"
+        ],
+        "type": "object"
+      },
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state."
+    },
+    {
+      "name": "test_connection",
+      "description": "Test connection to the openLCA IPC server. Use this first to verify openLCA is running and reachable. Returns connection status and port.",
+      "parameters": {
+        "additionalProperties": false,
+        "properties": {},
+        "type": "object"
+      },
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state."
+    }
+  ]
+}

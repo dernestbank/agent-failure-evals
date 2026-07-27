@@ -232,6 +232,26 @@ The branch adds machine-enforced enums, a 0–1 cutoff range, and a closed Pydan
 
 No connector deployment or live backend was changed.
 
+### OpenLCA schema-hardening model ablation
+
+The same 20 OpenLCA intents were evaluated against the before and hardened local source schemas across three local models, three seeds, and temperature 0.2. The 360-run before/after matrix completed without infrastructure failures. A separate 180-run replay of the unchanged before schema measured background local-inference variation.
+
+| Model | Raw exact delta | Replay delta | Replay-adjusted delta | Expected-tool schema delta |
+|---|---:|---:|---:|---:|
+| Qwen Coder 1.5B | 0.0 pp | 0.0 pp | 0.0 pp | 0.0 pp |
+| Gemma 3 4B | +10.0 pp | +3.3 pp | **+6.7 pp** | **+16.7 pp** |
+| Qwen 3 8B | +11.7 pp | +1.7 pp | **+10.0 pp** | **+33.3 pp** |
+
+Direct mechanisms were consistent across all three seeds:
+
+- Qwen 3 changed `model_type` from `process` to enum-valid `Process`.
+- Qwen 3 supplied `flow_type=PRODUCT_FLOW` only under the hardened schema.
+- Gemma reduced a redundant two-call inventory sequence to one `direction=output` call.
+
+Qwen Coder 1.5B did not benefit. The replay also reproduced a health-check improvement on an identical prompt, confirming that same-schema replay is necessary before attributing every local-output change to schema design.
+
+These are contract-level results. No call was executed in openLCA, only six task intents changed the expected-call tool schema, and the repeated seeds are not independent samples.
+
 See:
 
 - `report/domain_toolbench_technical_report_v0_1.md`
@@ -254,6 +274,10 @@ See:
 - `report/openlca_mcp_schema_hardening_note.md`
 - `results/public/openlca_mcp_schema_hardening_delta.md`
 - `manifests/openlca_mcp_fastmcp_source_b316008.json`
+- `report/openlca_mcp_schema_hardening_model_ablation_note.md`
+- `results/public/openlca_schema_hardening_model_ablation.md`
+- `results/public/openlca_schema_replay_control.md`
+- `docs/experiment_logs/openlca_schema_hardening_model_ablation_log.md`
 
 ### Run DomainToolBench
 
@@ -350,6 +374,11 @@ python scripts\build_openlca_mcp_hardening_report.py `
   results\public\openlca_mcp_schema_drift_hardened.csv `
   results\public\openlca_mcp_schema_hardening_delta.csv `
   results\public\openlca_mcp_schema_hardening_delta.md
+
+python scripts\run_openlca_schema_hardening_matrix.py
+python scripts\build_openlca_schema_hardening_model_report.py
+python scripts\run_openlca_schema_replay_control.py
+python scripts\build_openlca_schema_replay_report.py
 ```
 
 ## Installation

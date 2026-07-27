@@ -2,11 +2,18 @@
 
 from __future__ import annotations
 
+import csv
 import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST_PATH = ROOT / "results" / "public" / "manifest.json"
+
+
+def read_csv_rows(path: Path) -> list[dict[str, str]]:
+    with path.open(encoding="utf-8", newline="") as handle:
+        return list(csv.DictReader(handle))
+
 
 CONDITIONS = {
     "curated_catalog_zero_shot": [
@@ -271,6 +278,75 @@ def main() -> None:
         "deployment_changed": False,
         "live_backend_tested": False,
     }
+
+    ablation_rows = read_csv_rows(
+        ROOT / "results" / "public" / "openlca_schema_hardening_model_aggregate.csv"
+    )
+    replay_rows = read_csv_rows(
+        ROOT / "results" / "public" / "openlca_schema_replay_control_aggregate.csv"
+    )
+    model_results: dict[str, object] = {}
+    for model in ("qwen2.5-coder:1.5b", "gemma3:4b", "qwen3:8b"):
+        before = next(
+            row for row in ablation_rows if row["model"] == model and row["surface"] == "before"
+        )
+        after = next(
+            row for row in ablation_rows if row["model"] == model and row["surface"] == "after"
+        )
+        replay_all = next(
+            row for row in replay_rows if row["model"] == model and row["group"] == "all"
+        )
+        replay_expected = next(
+            row
+            for row in replay_rows
+            if row["model"] == model and row["group"] == "expected_tool_changed"
+        )
+        model_results[model] = {
+            "before_exact_accuracy": float(before["mean_sequence_exact_accuracy"]),
+            "after_exact_accuracy": float(after["mean_sequence_exact_accuracy"]),
+            "raw_schema_delta": float(replay_all["schema_delta"]),
+            "same_schema_replay_delta": float(replay_all["replay_delta"]),
+            "replay_adjusted_delta": float(replay_all["replay_adjusted_delta"]),
+            "expected_tool_schema_delta": float(replay_expected["schema_delta"]),
+            "expected_tool_replay_delta": float(replay_expected["replay_delta"]),
+            "before_replay_exact_status_agreement": float(
+                replay_all["before_replay_exact_status_agreement"]
+            ),
+            "before_replay_full_result_identity": float(
+                replay_all["before_replay_full_result_identity"]
+            ),
+            "schema_improvements": int(replay_all["schema_improvements"]),
+            "schema_regressions": int(replay_all["schema_regressions"]),
+            "replay_improvements": int(replay_all["replay_improvements"]),
+            "replay_regressions": int(replay_all["replay_regressions"]),
+        }
+
+    manifest["openlca_mcp_schema_model_ablation"] = {
+        "before_source_commit": drift_summary["source_commit"],
+        "after_source_commit": hardening_summary["source_commit"],
+        "task_intents_per_surface": 20,
+        "tasks_with_any_schema_exposure_change": 15,
+        "tasks_with_expected_tool_schema_change": 6,
+        "models": list(model_results),
+        "seeds": [101, 202, 303],
+        "temperature": 0.2,
+        "before_after_experiments": 18,
+        "before_after_task_runs": 360,
+        "same_schema_replay_experiments": 9,
+        "same_schema_replay_task_runs": 180,
+        "total_inference_task_runs": 540,
+        "infrastructure_failures": 0,
+        "model_results": model_results,
+        "direct_mechanisms": [
+            "qwen3_model_type_enum_capitalization",
+            "qwen3_flow_type_enum_completion",
+            "gemma_inventory_direction_duplicate_call_reduction",
+        ],
+        "execution_mode": "proposal_only_no_openlca_execution",
+        "deployed_connector_evaluated": False,
+        "statistical_status": "preliminary_repeated_seeds_not_independent",
+        "method_log": ("docs/experiment_logs/openlca_schema_hardening_model_ablation_log.md"),
+    }
     manifest["public_reports"] = [
         "report/technical_report_v0_1.md",
         "report/domain_toolbench_technical_report_v0_1.md",
@@ -280,6 +356,7 @@ def main() -> None:
         "report/deterministic_tool_call_guard_note.md",
         "report/openlca_mcp_schema_drift_note.md",
         "report/openlca_mcp_schema_hardening_note.md",
+        "report/openlca_mcp_schema_hardening_model_ablation_note.md",
     ]
     MANIFEST_PATH.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(

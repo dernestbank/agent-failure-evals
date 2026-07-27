@@ -31,6 +31,9 @@ All notable changes to this project are documented here.
 - Versioned local FastMCP and connector-visible OpenLCA-MCP manifests
 - Source-to-connector schema drift comparison and technical note
 - OpenLCA-MCP schema-hardening before/after report and technical note
+- 360-run OpenLCA source-schema model ablation across three local models and three seeds
+- 180-run same-schema replay control with task-level identity and transition analysis
+- OpenLCA schema-hardening model-ablation technical note and continuously updated method log
 - Paired 20-task OpenLCA source and connector schema benchmarks
 - Three source-only `check_result_consistency` extension tasks
 - Surgical DomainToolBench task-repair utility and repair log
@@ -58,6 +61,10 @@ All notable changes to this project are documented here.
 - Six shared OpenLCA tools differ in schema constraints and local version metadata disagrees between 0.4.1 and 0.4.0
 - Source hardening aligned version metadata and reduced schema-constraint drift from six tools to two
 - Drift was resolved for `analyze_contributions`, `get_entity_by_name`, `get_inventory_results`, and `search_flows` without introducing new drift
+- Replay-adjusted exact-call gains were +10.0 percentage points for Qwen 3 and +6.7 points for Gemma 3; Qwen Coder 1.5B showed no gain
+- On six tasks whose expected-call tool schema changed, Qwen 3 gained 33.3 points and Gemma 3 gained 16.7 points while same-schema replay showed zero gain
+- Qwen 3 adopted enum-valid `Process` and `PRODUCT_FLOW` values across all three seeds; Gemma reduced a redundant inventory sequence to one direction-correct call
+- Same-schema replay exact-status agreement was 100.0% for Qwen Coder, 96.7% for Gemma, and 98.3% for Qwen 3
 
 ### Changed
 
@@ -73,6 +80,7 @@ All notable changes to this project are documented here.
 - Grounded numeric strings and number words can be canonically converted to schema-compatible numeric values
 - Domain tool-calling tasks can now record manifest identity, commit, schema source, and execution mode
 - OpenLCA-MCP source branch `research/schema-contract-hardening` adds machine-enforced enums, cutoff range, and typed process exchanges
+- OpenLCA schema experiments now use atomic run locks and a same-schema replay control before causal interpretation
 
 ### Fixed
 
@@ -80,11 +88,13 @@ All notable changes to this project are documented here.
 - Valid-alternative sequence scoring with repeated tool names
 - Provider-specific structured error objects and wrapped response objects
 - Retrieval and catalog metadata recording in experiment manifests
+- Discarded a duplicated partial OpenLCA schema run after a connector-timeout relaunch and restarted the full matrix from zero under one atomic lock
 
 ### Planned
 
 - Held-out no-tool threshold calibration and multi-tool-aware retrieval
 - Fresh authenticated deployed OpenLCA `tools/list` capture
+- Single-constraint enum, range, and nested-object schema ablations
 - Paired source-versus-deployed schema model evaluation
 - Live versioned MCP sandbox-execution validation
 - Class-balanced supervised behavior adapter and calibrated fallback

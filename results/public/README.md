@@ -29,6 +29,13 @@ This directory contains sanitized aggregate outputs from the approved v0.2.0 exp
 - `openlca_mcp_schema_drift.csv` / `.md` — local-source versus connector-visible contract audit
 - `openlca_mcp_schema_drift_hardened.csv` / `.md` — hardened source versus connector audit
 - `openlca_mcp_schema_hardening_delta.csv` / `.md` — before/after remediation comparison
+- `openlca_schema_hardening_model_runs.csv` — per-seed before/after OpenLCA model metrics
+- `openlca_schema_hardening_model_aggregate.csv` — model-surface aggregate metrics
+- `openlca_schema_hardening_model_tasks.csv` — paired task-level before/after transitions
+- `openlca_schema_hardening_model_ablation.md` — readable first-pass model ablation
+- `openlca_schema_replay_control_aggregate.csv` — same-schema replay-adjusted metrics
+- `openlca_schema_replay_control_tasks.csv` — task-level before/after/replay comparison
+- `openlca_schema_replay_control.md` — readable replay-control interpretation
 
 ## Excluded
 
@@ -59,5 +66,7 @@ The ToolCallGuard stability study uses the 15-task top-three retrieval set, thre
 The OpenLCA-MCP schema audit compares a local FastMCP-generated source manifest at commit `4865b2b` with the connector-visible schema captured on July 26, 2026. The connector health probe failed with HTTP 502, and no live behavior comparison was made. Source and connector manifests remain separate.
 
 The schema-hardening delta compares source commits `4865b2b` and `b316008` against the same pinned connector snapshot. It measures source contract remediation only; the deployed connector and live backend were not changed.
+
+The OpenLCA source-schema model ablation uses 20 identical intents, three local models, three seeds, and temperature 0.2. The 360-run before/after matrix is interpreted together with a separate 180-run replay of the unchanged before surface. Replay-adjusted deltas describe contract-level proposal changes only; no call was executed in openLCA, repeated seeds are not independent, and the deployed connector was not evaluated.
 
 All results are preliminary, not peer reviewed, and apply only to the tested prompts, model identifiers, providers, catalog conditions, schemas, source commits, and controlled tasks.

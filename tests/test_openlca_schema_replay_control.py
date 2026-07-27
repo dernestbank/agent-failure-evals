@@ -4,10 +4,24 @@ import pytest
 
 from agent_failure_evals.replay_control import (
     acquire_file_lock,
+    counterbalanced_pair_order,
     exact_transition,
     release_file_lock,
     summarize_transitions,
 )
+
+
+def test_counterbalanced_pair_order() -> None:
+    control_first = frozenset({101, 303})
+
+    assert counterbalanced_pair_order(101, control_first, "control", "enum") == (
+        "control",
+        "enum",
+    )
+    assert counterbalanced_pair_order(202, control_first, "control", "enum") == (
+        "enum",
+        "control",
+    )
 
 
 def test_transition_labels_exact_status_changes() -> None:

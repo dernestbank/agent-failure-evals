@@ -1,0 +1,3337 @@
+{
+  "manifest_schema_version": "1.0",
+  "captured_at": "2026-07-27T00:01:19.269312+00:00",
+  "manifest_kind": "synthetic_openlca_mcp_enum_only_variant",
+  "capture_python_version": "3.12.6",
+  "source_repository": "https://github.com/SDAI-institute/openlca-mcp",
+  "source_commit": "4865b2b997f32352bbc01988fee3fb74a1733db1",
+  "source_commit_short": "4865b2b",
+  "source_commit_time": "2026-07-21T15:10:03-04:00",
+  "source_commit_subject": "Prepare PyPI publishing workflow",
+  "package_version_pyproject": "0.4.1",
+  "runtime_version_module": "0.4.0",
+  "version_consistent": false,
+  "tool_count": 25,
+  "tool_names": [
+    "analyze_contributions",
+    "calculate_impacts",
+    "check_result_consistency",
+    "compare_systems",
+    "create_process",
+    "create_product_flow",
+    "create_product_system",
+    "dispose_all_results",
+    "dispose_result",
+    "export_results",
+    "find_providers",
+    "get_contribution_tree",
+    "get_entity_by_name",
+    "get_inventory_results",
+    "get_normalized_impacts",
+    "get_sankey",
+    "get_total_requirements",
+    "get_weighted_impacts",
+    "health_check",
+    "run_monte_carlo",
+    "run_scenario_analysis",
+    "search_flows",
+    "search_impact_methods",
+    "search_processes",
+    "test_connection"
+  ],
+  "tools": [
+    {
+      "name": "analyze_contributions",
+      "title": null,
+      "description": "Identify which processes (or flows) contribute most to an impact category \u2014 the hotspots. Requires result_id and impact_category_id (from calculate_impacts' impacts). Returns top contributors with share and absolute amount.",
+      "version": null,
+      "parameters": [
+        {
+          "name": "result_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "impact_category_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "n",
+          "required": false,
+          "schema": {
+            "default": 10,
+            "type": "integer"
+          },
+          "default": 10
+        },
+        {
+          "name": "contribution_type",
+          "required": false,
+          "schema": {
+            "default": "process",
+            "type": "string"
+          },
+          "default": "process"
+        },
+        {
+          "name": "min_share",
+          "required": false,
+          "schema": {
+            "default": 0.0,
+            "type": "number"
+          },
+          "default": 0.0
+        },
+        {
+          "name": "connection",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default": null
+        }
+      ],
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "result_id": {
+            "type": "string"
+          },
+          "impact_category_id": {
+            "type": "string"
+          },
+          "n": {
+            "default": 10,
+            "type": "integer"
+          },
+          "contribution_type": {
+            "default": "process",
+            "type": "string",
+            "enum": [
+              "process",
+              "flow"
+            ]
+          },
+          "min_share": {
+            "default": 0.0,
+            "type": "number"
+          },
+          "connection": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "result_id",
+          "impact_category_id"
+        ],
+        "type": "object"
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "result_id": {
+            "type": "string"
+          },
+          "impact_category_id": {
+            "type": "string"
+          },
+          "contribution_type": {
+            "type": "string",
+            "enum": [
+              "process",
+              "flow"
+            ]
+          },
+          "count": {
+            "type": "integer"
+          },
+          "contributors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "amount": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "share": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "ref": {
+                  "type": "object",
+                  "description": "Compact openLCA entity reference.",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "category": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "title": "Analyze Contributions",
+        "readOnlyHint": true,
+        "destructiveHint": null,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state.",
+      "source_function": "analyze_contributions",
+      "source_module": "src.tools.interpretation"
+    },
+    {
+      "name": "calculate_impacts",
+      "title": null,
+      "description": "Calculate environmental impacts for a product system. Returns a result_id, a compact ResultSummary (top impacts, suggested next actions), the full impact list, and any consistency warnings. IMPORTANT: call dispose_result when done with the result_id.",
+      "version": null,
+      "parameters": [
+        {
+          "name": "system_id",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default": null
+        },
+        {
+          "name": "system_name",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default": null
+        },
+        {
+          "name": "method_id",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default": null
+        },
+        {
+          "name": "method_keywords",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default": null
+        },
+        {
+          "name": "amount",
+          "required": false,
+          "schema": {
+            "default": 1.0,
+            "type": "number"
+          },
+          "default": 1.0
+        },
+        {
+          "name": "connection",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default": null
+        }
+      ],
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "system_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "system_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "method_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "method_keywords": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "amount": {
+            "default": 1.0,
+            "type": "number"
+          },
+          "connection": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "type": "object"
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "result_id": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "object"
+          },
+          "impacts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "category": {
+                  "type": "object",
+                  "description": "Compact openLCA entity reference.",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "category": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "category_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "amount": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "unit": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            }
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "context": {
+            "type": "object"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "title": "Calculate Impacts",
+        "readOnlyHint": true,
+        "destructiveHint": null,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "risk_class": "read_only_stateful_compute",
+      "operational_effect": "Creates or computes temporary analysis state.",
+      "source_function": "calculate_impacts",
+      "source_module": "src.tools.lca_impact"
+    },
+    {
+      "name": "check_result_consistency",
+      "title": null,
+      "description": "Sanity-check a stored calculation result: for every impact category, verify that per-process contributions sum to the reported total (within tolerance). A mismatch usually signals broken provider linking or a partially-computed result. Run this after calculate_impacts before trusting the numbers.",
+      "version": null,
+      "parameters": [
+        {
+          "name": "result_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "rel_tol",
+          "required": false,
+          "schema": {
+            "default": 0.001,
+            "type": "number"
+          },
+          "default": 0.001
+        },
+        {
+          "name": "abs_tol",
+          "required": false,
+          "schema": {
+            "default": 1e-12,
+            "type": "number"
+          },
+          "default": 1e-12
+        },
+        {
+          "name": "connection",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default": null
+        }
+      ],
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "result_id": {
+            "type": "string"
+          },
+          "rel_tol": {
+            "default": 0.001,
+            "type": "number"
+          },
+          "abs_tol": {
+            "default": 1e-12,
+            "type": "number"
+          },
+          "connection": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "result_id"
+        ],
+        "type": "object"
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "consistent": {
+            "type": "boolean",
+            "description": "True if no warnings were found."
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "One string per inconsistency found; empty if consistent."
+            }
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "title": "Check Result Consistency",
+        "readOnlyHint": true,
+        "destructiveHint": null,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state.",
+      "source_function": "check_result_consistency",
+      "source_module": "src.tools.interpretation"
+    },
+    {
+      "name": "compare_systems",
+      "title": null,
+      "description": "Compare two product systems on the same impact method. Returns per-category system1, system2, difference, and percent change. Runs and disposes both calculations internally (no result_id needed).",
+      "version": null,
+      "parameters": [
+        {
+          "name": "system1_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "system2_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "method_id",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default": null
+        },
+        {
+          "name": "method_keywords",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default": null
+        },
+        {
+          "name": "amount",
+          "required": false,
+          "schema": {
+            "default": 1.0,
+            "type": "number"
+          },
+          "default": 1.0
+        },
+        {
+          "name": "connection",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default": null
+        }
+      ],
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "system1_id": {
+            "type": "string"
+          },
+          "system2_id": {
+            "type": "string"
+          },
+          "method_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "method_keywords": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "amount": {
+            "default": 1.0,
+            "type": "number"
+          },
+          "connection": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "system1_id",
+          "system2_id"
+        ],
+        "type": "object"
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "comparison": {
+            "type": "object",
+            "description": "Per-category system1, system2, difference, % change."
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "title": "Compare Systems",
+        "readOnlyHint": true,
+        "destructiveHint": null,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state.",
+      "source_function": "compare_systems",
+      "source_module": "src.tools.interpretation"
+    },
+    {
+      "name": "create_process",
+      "title": null,
+      "description": "Create a unit process with inputs and outputs. Each exchange: flow_id (id preferred, name accepted), amount, is_input, optional is_quantitative_reference, optional provider_id. The exchange amount is interpreted in the flow's REFERENCE unit (e.g. t*km for transport, kg for mass); pass optional 'formula' (e.g. '0.065*500') to store an amount formula, or 'unit_id'/'flow_property_id' to record the amount in a non-reference property the flow defines. Returns 'warnings' if the process's Mass-property inputs and outputs don't balance (openLCA does not check this automatically). WRITE: blocked on read-only connections.",
+      "version": null,
+      "parameters": [
+        {
+          "name": "name",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "exchanges",
+          "required": true,
+          "schema": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        {
+          "name": "description",
+          "required": false,
+          "schema": {
+            "default": "",
+            "type": "string"
+          },
+          "default": ""
+        },
+        {
+          "name": "connection",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default": null
+        }
+      ],
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "exchanges": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "description": {
+            "default": "",
+            "type": "string"
+          },
+          "connection": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "name",
+          "exchanges"
+        ],
+        "type": "object"
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "process": {
+            "type": "object",
+            "description": "The newly created unit process."
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Mass-balance warnings, if any; empty if balanced."
+            }
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "title": "Create Process",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "risk_class": "database_write",
+      "operational_effect": "Creates persistent entities in the openLCA database.",
+      "source_function": "create_process",
+      "source_module": "src.tools.inventory"
+    },
+    {
+      "name": "create_product_flow",
+      "title": null,
+      "description": "Create a new product flow (Mass property, kg unit). Use to define the product under study or intermediate products. WRITE: blocked on read-only connections.",
+      "version": null,
+      "parameters": [
+        {
+          "name": "name",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "description",
+          "required": false,
+          "schema": {
+            "default": "",
+            "type": "string"
+          },
+          "default": ""
+        },
+        {
+          "name": "connection",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default": null
+        }
+      ],
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "default": "",
+            "type": "string"
+          },
+          "connection": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "flow": {
+            "type": "object",
+            "description": "The newly created product flow."
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "title": "Create Product Flow",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "risk_class": "database_write",
+      "operational_effect": "Creates persistent entities in the openLCA database.",
+      "source_function": "create_product_flow",
+      "source_module": "src.tools.inventory"
+    },
+    {
+      "name": "create_product_system",
+      "title": null,
+      "description": "Create a product system from a process (auto-links providers). Returns the product system id for calculations. Provide process_id (preferred) or process_name. Optional cutoff (0-1, e.g. 0.05 for a 5% cut-off), default_providers ('prefer'|'only'|'ignore') and preferred_type ('LCI_RESULT'|'UNIT_PROCESS'). WRITE: blocked on read-only connections.",
+      "version": null,
+      "parameters": [
+        {
+          "name": "process_id",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default": null
+        },
+        {
+          "name": "process_name",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default": null
+        },
+        {
+          "name": "cutoff",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default": null
+        },
+        {
+          "name": "default_providers",
+          "required": false,
+          "schema": {
+            "default": "prefer",
+            "type": "string"
+          },
+          "default": "prefer"
+        },
+        {
+          "name": "preferred_type",
+          "required": false,
+          "schema": {
+            "default": "LCI_RESULT",
+            "type": "string"
+          },
+          "default": "LCI_RESULT"
+        },
+        {
+          "name": "connection",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default": null
+        }
+      ],
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "process_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "process_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "cutoff": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default_providers": {
+            "default": "prefer",
+            "type": "string"
+          },
+          "preferred_type": {
+            "default": "LCI_RESULT",
+            "type": "string"
+          },
+          "connection": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "type": "object"
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "product_system": {
+            "type": "object",
+            "description": "The created product system."
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "title": "Create Product System",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "risk_class": "database_write",
+      "operational_effect": "Creates persistent entities in the openLCA database.",
+      "source_function": "create_product_system",
+      "source_module": "src.tools.inventory"
+    },
+    {
+      "name": "dispose_all_results",
+      "title": null,
+      "description": "Dispose every tracked calculation result. Useful for cleanup at the end of a session.",
+      "version": null,
+      "parameters": [],
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {},
+        "type": "object"
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "disposed_count": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "title": "Dispose All Results",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "risk_class": "result_store_cleanup",
+      "operational_effect": "Deletes temporary calculation results from server memory.",
+      "source_function": "dispose_all_results",
+      "source_module": "src.tools.lifecycle"
+    },
+    {
+      "name": "dispose_result",
+      "title": null,
+      "description": "Dispose a calculation result to free server memory. Always call this when finished with a result_id from calculate_impacts.",
+      "version": null,
+      "parameters": [
+        {
+          "name": "result_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "result_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "result_id"
+        ],
+        "type": "object"
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "disposed": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "title": "Dispose Result",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "risk_class": "result_store_cleanup",
+      "operational_effect": "Deletes temporary calculation results from server memory.",
+      "source_function": "dispose_result",
+      "source_module": "src.tools.lifecycle"
+    },
+    {
+      "name": "export_results",
+      "title": null,
+      "description": "Export results to a file. With result_id: export its impacts to CSV (format=csv) or an Excel workbook (format=excel). With data + kind=comparison: export a compare_systems result to CSV. filepath is the output path on the server host.",
+      "version": null,
+      "parameters": [
+        {
+          "name": "filepath",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "result_id",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default": null
+        },
+        {
+          "name": "data",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default": null
+        },
+        {
+          "name": "kind",
+          "required": false,
+          "schema": {
+            "default": "impacts",
+            "type": "string"
+          },
+          "default": "impacts"
+        },
+        {
+          "name": "format",
+          "required": false,
+          "schema": {
+            "default": "csv",
+            "type": "string"
+          },
+          "default": "csv"
+        },
+        {
+          "name": "connection",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default": null
+        }
+      ],
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "filepath": {
+            "type": "string"
+          },
+          "result_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "data": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "kind": {
+            "default": "impacts",
+            "type": "string"
+          },
+          "format": {
+            "default": "csv",
+            "type": "string"
+          },
+          "connection": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "filepath"
+        ],
+        "type": "object"
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "exported": {
+            "type": "boolean"
+          },
+          "filepath": {
+            "type": "string"
+          },
+          "format": {
+            "type": "string",
+            "enum": [
+              "csv",
+              "excel"
+            ]
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "title": "Export Results",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "risk_class": "file_write",
+      "operational_effect": "Writes a result file on the server host.",
+      "source_function": "export_results",
+      "source_module": "src.tools.interpretation"
+    },
+    {
+      "name": "find_providers",
+      "title": null,
+      "description": "Find all processes that produce a given flow. Provide flow_id (preferred) or flow_name. Use after search_flows to identify production processes for linking.",
+      "version": null,
+      "parameters": [
+        {
+          "name": "flow_id",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default": null
+        },
+        {
+          "name": "flow_name",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default": null
+        },
+        {
+          "name": "connection",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default": null
+        }
+      ],
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "flow_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "flow_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "connection": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "type": "object"
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "count": {
+            "type": "integer"
+          },
+          "providers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "description": "Compact openLCA entity reference.",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "category": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "title": "Find Providers",
+        "readOnlyHint": true,
+        "destructiveHint": null,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state.",
+      "source_function": "find_providers",
+      "source_module": "src.tools.goal_scope"
+    },
+    {
+      "name": "get_contribution_tree",
+      "title": null,
+      "description": "Build an upstream contribution (hotspot) tree for an impact category: nested process nodes with amount, direct contribution, and share. Requires result_id and impact_category_id. Pruned by max_depth and min_share.",
+      "version": null,
+      "parameters": [
+        {
+          "name": "result_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "impact_category_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "max_depth",
+          "required": false,
+          "schema": {
+            "default": 3,
+            "type": "integer"
+          },
+          "default": 3
+        },
+        {
+          "name": "min_share",
+          "required": false,
+          "schema": {
+            "default": 0.01,
+            "type": "number"
+          },
+          "default": 0.01
+        },
+        {
+          "name": "connection",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default": null
+        }
+      ],
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "result_id": {
+            "type": "string"
+          },
+          "impact_category_id": {
+            "type": "string"
+          },
+          "max_depth": {
+            "default": 3,
+            "type": "integer"
+          },
+          "min_share": {
+            "default": 0.01,
+            "type": "number"
+          },
+          "connection": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "result_id",
+          "impact_category_id"
+        ],
+        "type": "object"
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "result_id": {
+            "type": "string"
+          },
+          "impact_category_id": {
+            "type": "string"
+          },
+          "tree": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "description": "Recursive node: name, amount, direct, share, ref, children[]."
+            }
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "title": "Get Contribution Tree",
+        "readOnlyHint": true,
+        "destructiveHint": null,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state.",
+      "source_function": "get_contribution_tree",
+      "source_module": "src.tools.interpretation"
+    },
+    {
+      "name": "get_entity_by_name",
+      "title": null,
+      "description": "Exact-name lookup of a single entity. Faster and more precise than keyword search when you know the exact name. Returns a compact {id, name, type, category} summary.",
+      "version": null,
+      "parameters": [
+        {
+          "name": "model_type",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "name",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "connection",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default": null
+        }
+      ],
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "model_type": {
+            "type": "string",
+            "enum": [
+              "Flow",
+              "Process",
+              "ImpactMethod",
+              "ProductSystem",
+              "FlowProperty",
+              "Unit"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "connection": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "model_type",
+          "name"
+        ],
+        "type": "object"
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "entity": {
+            "type": "object",
+            "description": "Compact summary of the matched entity."
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "title": "Get Entity By Name",
+        "readOnlyHint": true,
+        "destructiveHint": null,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state.",
+      "source_function": "get_entity_by_name",
+      "source_module": "src.tools.goal_scope"
+    },
+    {
+      "name": "get_inventory_results",
+      "title": null,
+      "description": "Get the life cycle inventory (elementary/environmental flows) for a calculated result. Requires result_id from calculate_impacts. direction filters input/output/both.",
+      "version": null,
+      "parameters": [
+        {
+          "name": "result_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "direction",
+          "required": false,
+          "schema": {
+            "default": "both",
+            "type": "string"
+          },
+          "default": "both"
+        },
+        {
+          "name": "connection",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default": null
+        }
+      ],
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "result_id": {
+            "type": "string"
+          },
+          "direction": {
+            "default": "both",
+            "type": "string",
+            "enum": [
+              "input",
+              "output",
+              "both"
+            ]
+          },
+          "connection": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "result_id"
+        ],
+        "type": "object"
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "result_id": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer"
+          },
+          "inventory": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "flow": {
+                  "type": "object",
+                  "description": "Compact openLCA entity reference.",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "category": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "amount": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "unit": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "is_input": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "location": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "title": "Get Inventory Results",
+        "readOnlyHint": true,
+        "destructiveHint": null,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state.",
+      "source_function": "get_inventory_results",
+      "source_module": "src.tools.lca_impact"
+    },
+    {
+      "name": "get_normalized_impacts",
+      "title": null,
+      "description": "Get normalized impact results (relative to the method's normalization set). Requires result_id. Empty if the method has no normalization set.",
+      "version": null,
+      "parameters": [
+        {
+          "name": "result_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "connection",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default": null
+        }
+      ],
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "result_id": {
+            "type": "string"
+          },
+          "connection": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "result_id"
+        ],
+        "type": "object"
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "result_id": {
+            "type": "string"
+          },
+          "normalized": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "category": {
+                  "type": "object",
+                  "description": "Compact openLCA entity reference.",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "category": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "category_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "amount": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "unit": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "title": "Get Normalized Impacts",
+        "readOnlyHint": true,
+        "destructiveHint": null,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state.",
+      "source_function": "get_normalized_impacts",
+      "source_module": "src.tools.lca_impact"
+    },
+    {
+      "name": "get_sankey",
+      "title": null,
+      "description": "Get Sankey-graph data (nodes + edges) for an impact category, suitable for visualization. Requires result_id and impact_category_id.",
+      "version": null,
+      "parameters": [
+        {
+          "name": "result_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "impact_category_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "max_nodes",
+          "required": false,
+          "schema": {
+            "default": 50,
+            "type": "integer"
+          },
+          "default": 50
+        },
+        {
+          "name": "min_share",
+          "required": false,
+          "schema": {
+            "default": 0.0,
+            "type": "number"
+          },
+          "default": 0.0
+        },
+        {
+          "name": "connection",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default": null
+        }
+      ],
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "result_id": {
+            "type": "string"
+          },
+          "impact_category_id": {
+            "type": "string"
+          },
+          "max_nodes": {
+            "default": 50,
+            "type": "integer"
+          },
+          "min_share": {
+            "default": 0.0,
+            "type": "number"
+          },
+          "connection": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "result_id",
+          "impact_category_id"
+        ],
+        "type": "object"
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "result_id": {
+            "type": "string"
+          },
+          "impact_category_id": {
+            "type": "string"
+          },
+          "sankey": {
+            "type": "object",
+            "description": "Graph data with nodes and edges."
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "title": "Get Sankey",
+        "readOnlyHint": true,
+        "destructiveHint": null,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state.",
+      "source_function": "get_sankey",
+      "source_module": "src.tools.interpretation"
+    },
+    {
+      "name": "get_total_requirements",
+      "title": null,
+      "description": "Get the total requirements (scaled technology flows) of a calculated product system: which processes run and at what amount. Requires result_id.",
+      "version": null,
+      "parameters": [
+        {
+          "name": "result_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "connection",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default": null
+        }
+      ],
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "result_id": {
+            "type": "string"
+          },
+          "connection": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "result_id"
+        ],
+        "type": "object"
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "result_id": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer"
+          },
+          "requirements": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "process": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "provider": {
+                  "type": "object",
+                  "description": "Compact openLCA entity reference.",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "category": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "flow": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "amount": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "title": "Get Total Requirements",
+        "readOnlyHint": true,
+        "destructiveHint": null,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state.",
+      "source_function": "get_total_requirements",
+      "source_module": "src.tools.lca_impact"
+    },
+    {
+      "name": "get_weighted_impacts",
+      "title": null,
+      "description": "Get weighted impact results (after normalization + weighting). Requires result_id. Empty if the method has no weighting set.",
+      "version": null,
+      "parameters": [
+        {
+          "name": "result_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "connection",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default": null
+        }
+      ],
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "result_id": {
+            "type": "string"
+          },
+          "connection": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "result_id"
+        ],
+        "type": "object"
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "result_id": {
+            "type": "string"
+          },
+          "weighted": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "category": {
+                  "type": "object",
+                  "description": "Compact openLCA entity reference.",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "category": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "category_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "amount": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "unit": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "title": "Get Weighted Impacts",
+        "readOnlyHint": true,
+        "destructiveHint": null,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state.",
+      "source_function": "get_weighted_impacts",
+      "source_module": "src.tools.lca_impact"
+    },
+    {
+      "name": "health_check",
+      "title": null,
+      "description": "Health probe for the openLCA connection: whether the server is reachable and how much data the active database holds. Set count_entities=false to skip the counts.",
+      "version": null,
+      "parameters": [
+        {
+          "name": "count_entities",
+          "required": false,
+          "schema": {
+            "default": true,
+            "type": "boolean"
+          },
+          "default": true
+        },
+        {
+          "name": "connection",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default": null
+        }
+      ],
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "count_entities": {
+            "default": true,
+            "type": "boolean"
+          },
+          "connection": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "type": "object"
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "health": {
+            "type": "object",
+            "description": "Reachability and per-type entity counts."
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "title": "Health Check",
+        "readOnlyHint": true,
+        "destructiveHint": null,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state.",
+      "source_function": "health_check",
+      "source_module": "src.app"
+    },
+    {
+      "name": "run_monte_carlo",
+      "title": null,
+      "description": "Run Monte Carlo uncertainty analysis. Returns per-impact statistics (mean, std, CV, percentiles). Can be slow for large systems / high iteration counts.",
+      "version": null,
+      "parameters": [
+        {
+          "name": "system_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "method_id",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default": null
+        },
+        {
+          "name": "method_keywords",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default": null
+        },
+        {
+          "name": "iterations",
+          "required": false,
+          "schema": {
+            "default": 100,
+            "type": "integer"
+          },
+          "default": 100
+        },
+        {
+          "name": "connection",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default": null
+        }
+      ],
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "system_id": {
+            "type": "string"
+          },
+          "method_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "method_keywords": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "iterations": {
+            "default": 100,
+            "type": "integer"
+          },
+          "connection": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "system_id"
+        ],
+        "type": "object"
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "count": {
+            "type": "integer"
+          },
+          "uncertainty": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "description": "Per-impact uncertainty stats."
+            }
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "title": "Run Monte Carlo",
+        "readOnlyHint": true,
+        "destructiveHint": null,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "risk_class": "read_only_stateful_compute",
+      "operational_effect": "Creates or computes temporary analysis state.",
+      "source_function": "run_monte_carlo",
+      "source_module": "src.tools.interpretation"
+    },
+    {
+      "name": "run_scenario_analysis",
+      "title": null,
+      "description": "Vary a single parameter over a list of values and report impacts for each value. Useful for sensitivity analysis.",
+      "version": null,
+      "parameters": [
+        {
+          "name": "system_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "parameter_name",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "values",
+          "required": true,
+          "schema": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array"
+          }
+        },
+        {
+          "name": "method_id",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default": null
+        },
+        {
+          "name": "method_keywords",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default": null
+        },
+        {
+          "name": "connection",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default": null
+        }
+      ],
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "system_id": {
+            "type": "string"
+          },
+          "parameter_name": {
+            "type": "string"
+          },
+          "values": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array"
+          },
+          "method_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "method_keywords": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "connection": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "system_id",
+          "parameter_name",
+          "values"
+        ],
+        "type": "object"
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "parameter": {
+            "type": "string"
+          },
+          "scenarios": {
+            "type": "object",
+            "description": "Map of parameter value -> impact rows."
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "title": "Run Scenario Analysis",
+        "readOnlyHint": true,
+        "destructiveHint": null,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "risk_class": "read_only_stateful_compute",
+      "operational_effect": "Creates or computes temporary analysis state.",
+      "source_function": "run_scenario_analysis",
+      "source_module": "src.tools.interpretation"
+    },
+    {
+      "name": "search_flows",
+      "title": null,
+      "description": "Search for material flows in the openLCA database. Keywords are case-insensitive and use partial matching (all keywords must be present). Example: keywords=['steel','hot','rolled'] finds 'Steel, hot rolled, coil'.",
+      "version": null,
+      "parameters": [
+        {
+          "name": "keywords",
+          "required": true,
+          "schema": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        {
+          "name": "max_results",
+          "required": false,
+          "schema": {
+            "default": 10,
+            "type": "integer"
+          },
+          "default": 10
+        },
+        {
+          "name": "flow_type",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default": null
+        },
+        {
+          "name": "connection",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default": null
+        }
+      ],
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "keywords": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "max_results": {
+            "default": 10,
+            "type": "integer"
+          },
+          "flow_type": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "PRODUCT_FLOW",
+                  "ELEMENTARY_FLOW",
+                  "WASTE_FLOW"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "connection": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "keywords"
+        ],
+        "type": "object"
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "count": {
+            "type": "integer"
+          },
+          "flows": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "description": "Compact openLCA entity reference.",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "category": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "title": "Search Flows",
+        "readOnlyHint": true,
+        "destructiveHint": null,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state.",
+      "source_function": "search_flows",
+      "source_module": "src.tools.goal_scope"
+    },
+    {
+      "name": "search_impact_methods",
+      "title": null,
+      "description": "Search for LCIA methods (TRACI, ReCiPe, CML, ILCD, EF, ...). Returns the matched method with its impact categories (id + name).",
+      "version": null,
+      "parameters": [
+        {
+          "name": "keywords",
+          "required": true,
+          "schema": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        {
+          "name": "connection",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default": null
+        }
+      ],
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "keywords": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "connection": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "keywords"
+        ],
+        "type": "object"
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "method": {
+            "type": "object",
+            "description": "Matched impact method + its categories."
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "title": "Search Impact Methods",
+        "readOnlyHint": true,
+        "destructiveHint": null,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state.",
+      "source_function": "search_impact_methods",
+      "source_module": "src.tools.goal_scope"
+    },
+    {
+      "name": "search_processes",
+      "title": null,
+      "description": "Search for processes (production, transport, ...) in the openLCA database. Keywords are case-insensitive with partial matching (all must match).",
+      "version": null,
+      "parameters": [
+        {
+          "name": "keywords",
+          "required": true,
+          "schema": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        {
+          "name": "max_results",
+          "required": false,
+          "schema": {
+            "default": 10,
+            "type": "integer"
+          },
+          "default": 10
+        },
+        {
+          "name": "connection",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default": null
+        }
+      ],
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "keywords": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "max_results": {
+            "default": 10,
+            "type": "integer"
+          },
+          "connection": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "keywords"
+        ],
+        "type": "object"
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "count": {
+            "type": "integer"
+          },
+          "processes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "description": "Compact openLCA entity reference.",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "category": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "title": "Search Processes",
+        "readOnlyHint": true,
+        "destructiveHint": null,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state.",
+      "source_function": "search_processes",
+      "source_module": "src.tools.goal_scope"
+    },
+    {
+      "name": "test_connection",
+      "title": null,
+      "description": "Test connection to the openLCA IPC server. Use this first to verify openLCA is running and reachable. Returns connection status and port.",
+      "version": null,
+      "parameters": [
+        {
+          "name": "connection",
+          "required": false,
+          "schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "default": null
+        }
+      ],
+      "input_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "connection": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "type": "object"
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "connected": {
+            "type": "boolean",
+            "description": "Whether openLCA answered"
+          },
+          "port": {
+            "type": "integer",
+            "description": "IPC port that was probed"
+          },
+          "connection": {
+            "type": "string",
+            "description": "Profile id that was used"
+          }
+        },
+        "required": [
+          "success"
+        ],
+        "additionalProperties": true
+      },
+      "annotations": {
+        "title": "Test Connection",
+        "readOnlyHint": true,
+        "destructiveHint": null,
+        "idempotentHint": true,
+        "openWorldHint": false
+      },
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state.",
+      "source_function": "test_connection",
+      "source_module": "src.app"
+    }
+  ],
+  "execution_status": {
+    "manifest_export": "FastMCP registration imported locally",
+    "openlca_ipc_contacted": false,
+    "live_openlca_execution": "not_tested_by_exporter"
+  },
+  "manifest_id": "openlca-mcp-source-4865b2b-enum-only-v0",
+  "base_source_commit": "4865b2b997f32352bbc01988fee3fb74a1733db1",
+  "intervention": {
+    "type": "enum_only",
+    "tool_properties": [
+      {
+        "tool": "analyze_contributions",
+        "property": "contribution_type",
+        "enum": [
+          "process",
+          "flow"
+        ]
+      },
+      {
+        "tool": "get_entity_by_name",
+        "property": "model_type",
+        "enum": [
+          "Flow",
+          "Process",
+          "ImpactMethod",
+          "ProductSystem",
+          "FlowProperty",
+          "Unit"
+        ]
+      },
+      {
+        "tool": "get_inventory_results",
+        "property": "direction",
+        "enum": [
+          "input",
+          "output",
+          "both"
+        ]
+      },
+      {
+        "tool": "search_flows",
+        "property": "flow_type",
+        "enum": [
+          "PRODUCT_FLOW",
+          "ELEMENTARY_FLOW",
+          "WASTE_FLOW"
+        ]
+      }
+    ],
+    "other_schema_changes": false
+  }
+}

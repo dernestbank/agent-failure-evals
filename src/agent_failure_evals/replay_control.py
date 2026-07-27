@@ -30,6 +30,19 @@ def release_file_lock(path: Path, descriptor: int) -> None:
     path.unlink(missing_ok=True)
 
 
+def counterbalanced_pair_order(
+    seed: int,
+    control_first_seeds: frozenset[int],
+    control: str = "control",
+    intervention: str = "intervention",
+) -> tuple[str, str]:
+    """Return a deterministic paired-condition order for one seed."""
+
+    if seed in control_first_seeds:
+        return control, intervention
+    return intervention, control
+
+
 def exact_transition(before: bool, other: bool) -> str:
     """Label one paired exact-call status transition."""
 

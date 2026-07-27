@@ -121,7 +121,10 @@
 - [x] Run 360-task before/after source-schema model ablation
 - [x] Run 180-task same-schema replay control
 - [x] Audit direct enum/contract mechanisms and replay variance
-- [ ] Run single-constraint schema ablations
+- [x] Freeze four-enum-only synthetic schema ablation before inference
+- [ ] Complete counterbalanced 480-run enum-only matrix
+- [ ] Analyze enum-only task groups and order effects
+- [ ] Run per-enum follow-up ablations
 - [ ] Run source-versus-deployed model comparison only after exact deployed descriptions are available
 - [ ] Replace provisional cross-domain tools with versioned live TEA and BioFlow schemas
 - [ ] Expand to 40 expert-authored OpenLCA tasks

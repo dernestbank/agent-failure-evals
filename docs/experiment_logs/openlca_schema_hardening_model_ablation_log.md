@@ -1,12 +1,13 @@
 ---
 title: OpenLCA-MCP Schema Hardening Model Ablation Log
-status: active
+status: preliminary-complete-pushed
 study_id: openlca-schema-hardening-model-ablation
 started: 2026-07-26
-last_updated: 2026-07-26T21:46:13-04:00
+last_updated: 2026-07-26T22:12:02-04:00
 repository_branch: experiment/provider-matrix
 before_source_commit: 4865b2b997f32352bbc01988fee3fb74a1733db1
 after_source_commit: b31600823cdcfc8509b9f66b889997c1d97965cd
+research_commit: f60acaa
 ---
 
 # OpenLCA-MCP Schema Hardening Model Ablation Log
@@ -190,5 +191,18 @@ The evidence is consistent with direct schema benefits for Qwen 3 and Gemma on s
 - [x] Run 180 replay task calls
 - [x] Audit replay discrepancies
 - [x] Revise technical interpretation
-- [ ] Update public manifest, report, white paper, and Course-notes
-- [ ] Pass release gate and push model-ablation milestone
+- [x] Update public manifest, report, white paper, and Course-notes
+- [x] Pass release gate and push model-ablation milestone (`f60acaa`)
+
+## Release checkpoint
+
+- Branch: `experiment/provider-matrix`
+- Commit: `f60acaa feat: add OpenLCA schema model ablation`
+- Push status: complete
+- Ruff format and lint: passed
+- Strict mypy across 71 modules: passed
+- Compilation: passed
+- Full pytest suite: passed
+- Artifact invariants: passed
+- Credential and local-path scans: passed
+- Release tag created: no

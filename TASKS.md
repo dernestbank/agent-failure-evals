@@ -63,7 +63,7 @@
 - [x] Commit and push deterministic ToolCallGuard milestone (`0ce2c40`)
 - [x] Commit and push OpenLCA-MCP schema audit milestone (`5e4d16c`)
 - [x] Commit and push OpenLCA-MCP schema-hardening delta milestone (`d1c96af`)
-- [ ] Commit and push OpenLCA schema model-ablation milestone
+- [x] Commit and push OpenLCA schema model-ablation milestone (`f60acaa`)
 - [ ] Review GitHub rendering and links
 - [ ] Tag v0.2.0 only after human confirmation
 

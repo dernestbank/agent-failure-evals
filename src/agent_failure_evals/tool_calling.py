@@ -43,6 +43,10 @@ class DomainToolCallingTask(BaseModel):
     retrieval_selected_tools: list[str] = Field(default_factory=list)
     retrieval_scores: dict[str, float] = Field(default_factory=dict)
     retrieval_recall: float | None = None
+    tool_manifest_id: str | None = None
+    tool_manifest_commit: str | None = None
+    tool_schema_source: str | None = None
+    execution_mode: str | None = None
 
 
 class ToolCallingResult(BaseModel):

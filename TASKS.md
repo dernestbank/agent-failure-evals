@@ -107,9 +107,15 @@
 - [x] Implement normalized behavior, routing, sequence, and argument scoring
 - [x] Add tool-calling unit tests
 - [x] Draft local scientific agents white paper
-- [ ] Export the live openLCA-MCP tool manifest
-- [ ] Replace provisional tool names with versioned normalized live schemas
-- [ ] Expand to 40 expert-authored seed tasks
+- [x] Export local FastMCP source manifest at commit `4865b2b`
+- [x] Capture connector-visible OpenLCA-MCP schema surface
+- [x] Compare source and connector schema drift
+- [x] Build paired 20-task source and connector schema benchmarks
+- [x] Build three source-only consistency tasks
+- [ ] Fetch a fresh authenticated deployed `tools/list` manifest when permitted
+- [ ] Run paired model comparison only after exact deployed descriptions are available
+- [ ] Replace provisional cross-domain tools with versioned live TEA and BioFlow schemas
+- [ ] Expand to 40 expert-authored OpenLCA tasks
 - [ ] Add held-out intent and held-out tool splits
 - [ ] Add adversarial hard negatives and schema-drift cases
 
@@ -137,7 +143,8 @@
 - [x] Add deterministic precondition guard for missing fields, types, enums, ranges, identifiers, and surplus calls
 - [x] Combine exploratory no-tool retrieval threshold with deterministic preconditions
 - [ ] Calibrate the no-tool threshold on a separate held-out split
-- [ ] Evaluate guard rules against live versioned MCP schemas
+- [x] Evaluate guard-compatible benchmark construction against versioned OpenLCA source and connector schemas
+- [ ] Evaluate guard rules against live sandboxed MCP execution
 - [ ] Add structured execution feedback and bounded repair
 - [x] Measure structural validity separately from semantic accuracy
 - [x] Measure model and condition latency
@@ -163,6 +170,7 @@
 - [x] DomainToolBench technical report draft
 - [x] Binary Call Gate stability technical note
 - [x] Deterministic ToolCallGuard technical note
+- [x] OpenLCA-MCP schema drift technical note
 - [x] Structured Outputs Are Not Enough engineering note draft
 - [x] Local tool-calling training curriculum
 - [ ] SDAI Labs research landing page

@@ -1,0 +1,351 @@
+{
+  "manifest_id": "openlca-mcp-connector-visible-2026-07-26",
+  "schema_source": "connector_visible_schema_capture",
+  "source_commit": null,
+  "connector_deployed_version": null,
+  "execution_status": {
+    "health_probe": "failed",
+    "health_probe_error": "HTTP 502 upstream or external service error",
+    "schema_available": true,
+    "live_openlca_execution": false
+  },
+  "tool_count": 13,
+  "tool_names": [
+    "analyze_contributions",
+    "calculate_impacts",
+    "compare_systems",
+    "dispose_result",
+    "find_providers",
+    "get_entity_by_name",
+    "get_inventory_results",
+    "get_total_requirements",
+    "health_check",
+    "search_flows",
+    "search_impact_methods",
+    "search_processes",
+    "test_connection"
+  ],
+  "tools": [
+    {
+      "name": "analyze_contributions",
+      "description": "Identify the largest process or flow contributors to an impact category.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "result_id": {
+            "type": "string"
+          },
+          "impact_category_id": {
+            "type": "string"
+          },
+          "n": {
+            "type": "integer",
+            "default": 10
+          },
+          "contribution_type": {
+            "type": "string",
+            "enum": [
+              "process",
+              "flow"
+            ],
+            "default": "process"
+          },
+          "min_share": {
+            "type": "number",
+            "default": 0
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "result_id",
+          "impact_category_id"
+        ]
+      },
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state."
+    },
+    {
+      "name": "calculate_impacts",
+      "description": "Calculate environmental impacts for a product system and return a result_id.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "system_id": {
+            "type": "string"
+          },
+          "system_name": {
+            "type": "string"
+          },
+          "method_id": {
+            "type": "string"
+          },
+          "method_keywords": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "amount": {
+            "type": "number",
+            "default": 1
+          }
+        },
+        "additionalProperties": false
+      },
+      "risk_class": "read_only_stateful_compute",
+      "operational_effect": "Creates or computes temporary analysis state."
+    },
+    {
+      "name": "compare_systems",
+      "description": "Compare two product systems on the same impact method.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "system1_id": {
+            "type": "string"
+          },
+          "system2_id": {
+            "type": "string"
+          },
+          "method_id": {
+            "type": "string"
+          },
+          "method_keywords": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "amount": {
+            "type": "number",
+            "default": 1
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "system1_id",
+          "system2_id"
+        ]
+      },
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state."
+    },
+    {
+      "name": "dispose_result",
+      "description": "Dispose one calculation result to free server memory.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "result_id": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "result_id"
+        ]
+      },
+      "risk_class": "result_store_cleanup",
+      "operational_effect": "Deletes temporary calculation results from server memory."
+    },
+    {
+      "name": "find_providers",
+      "description": "Find processes that produce a given flow.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "flow_id": {
+            "type": "string"
+          },
+          "flow_name": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state."
+    },
+    {
+      "name": "get_entity_by_name",
+      "description": "Look up one entity by exact name.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "model_type": {
+            "type": "string",
+            "enum": [
+              "Flow",
+              "Process",
+              "ImpactMethod",
+              "ProductSystem",
+              "FlowProperty",
+              "Unit"
+            ]
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "model_type",
+          "name"
+        ]
+      },
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state."
+    },
+    {
+      "name": "get_inventory_results",
+      "description": "Get life-cycle inventory flows for a calculation result.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "result_id": {
+            "type": "string"
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "input",
+              "output",
+              "both"
+            ],
+            "default": "both"
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "result_id"
+        ]
+      },
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state."
+    },
+    {
+      "name": "get_total_requirements",
+      "description": "Get scaled technology requirements for a calculated system.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "result_id": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "result_id"
+        ]
+      },
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state."
+    },
+    {
+      "name": "health_check",
+      "description": "Probe openLCA reachability and optionally count database entities.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "count_entities": {
+            "type": "boolean",
+            "default": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state."
+    },
+    {
+      "name": "search_flows",
+      "description": "Search material flows using case-insensitive partial keyword matching.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "keywords": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "max_results": {
+            "type": "integer",
+            "default": 10
+          },
+          "flow_type": {
+            "type": "string",
+            "enum": [
+              "PRODUCT_FLOW",
+              "ELEMENTARY_FLOW",
+              "WASTE_FLOW"
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "keywords"
+        ]
+      },
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state."
+    },
+    {
+      "name": "search_impact_methods",
+      "description": "Search LCIA methods and return impact categories.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "keywords": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "keywords"
+        ]
+      },
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state."
+    },
+    {
+      "name": "search_processes",
+      "description": "Search processes using case-insensitive partial keyword matching.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "keywords": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "max_results": {
+            "type": "integer",
+            "default": 10
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "keywords"
+        ]
+      },
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state."
+    },
+    {
+      "name": "test_connection",
+      "description": "Test the openLCA IPC connection.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state."
+    }
+  ]
+}

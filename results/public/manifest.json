@@ -587,6 +587,34 @@
     "report/white_paper_local_scientific_agents.md",
     "report/engineering_note_structured_outputs.md",
     "report/binary_call_gate_stability_note.md",
-    "report/deterministic_tool_call_guard_note.md"
-  ]
+    "report/deterministic_tool_call_guard_note.md",
+    "report/openlca_mcp_schema_drift_note.md"
+  ],
+  "openlca_mcp_schema_audit": {
+    "local_source_commit": "4865b2b997f32352bbc01988fee3fb74a1733db1",
+    "local_source_tool_count": 25,
+    "connector_visible_tool_count": 24,
+    "shared_tool_count": 24,
+    "source_only_tools": [
+      "check_result_consistency"
+    ],
+    "connector_only_tools": [],
+    "hidden_connection_parameter_tools": 23,
+    "shared_parameter_name_drift_tools": 1,
+    "schema_constraint_drift_tools": 6,
+    "local_package_version_pyproject": "0.4.1",
+    "local_runtime_version_module": "0.4.0",
+    "local_version_consistent": false,
+    "connector_deployed_version": null,
+    "connector_health": {
+      "health_probe": "failed",
+      "health_probe_error": "HTTP 502 upstream or external service error",
+      "schema_available": true,
+      "live_openlca_execution": false
+    },
+    "common_schema_pinned_tasks_per_surface": 20,
+    "connector_common_tasks": 20,
+    "source_only_extension_tasks": 3,
+    "model_comparison_status": "not_run_exact_deployed_descriptions_and_live_backend_unavailable"
+  }
 }

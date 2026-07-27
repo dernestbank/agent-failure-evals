@@ -197,6 +197,27 @@ Sanitize-and-preserve produced:
 
 The guard preserved 100% of already exact proposals and captured 100% of unsafe proposals. These are deterministic filtering gains, not improved model reasoning. Residual failures came from missing retrieved tools, absent model calls, and incomplete multi-tool reasoning.
 
+### OpenLCA-MCP schema drift and versioned benchmarks
+
+A versioned interface audit compared local FastMCP-generated source at commit `4865b2b` with the connector-visible schema captured on July 26, 2026.
+
+- Local source tools: **25**
+- Connector-visible tools: **24**
+- Source-only tool: `check_result_consistency`
+- Shared tools with client-visible parameter-name drift: **1**
+- Shared tools with schema/constraint drift: **6**
+- Source tools with internal `connection` routing hidden from the connector: **23**
+- Local version metadata: `0.4.1` in `pyproject.toml` versus `0.4.0` in `src.__version__`
+- Connector health probe: HTTP 502, so live behavior was not evaluated
+
+The repository now contains:
+
+- 20 identical common intents rendered against the local-source schema;
+- the same 20 intents rendered against the connector-visible schema;
+- three explicit source-only consistency tasks.
+
+No model comparison has been run on these paired benchmarks. The connector snapshot preserves exact tool names and parameter schemas, but its descriptions are concise connector-derived representations rather than a fresh authenticated direct `tools/list` payload.
+
 See:
 
 - `report/domain_toolbench_technical_report_v0_1.md`
@@ -212,6 +233,10 @@ See:
 - `report/deterministic_tool_call_guard_note.md`
 - `results/public/domain_tool_guard_stability.md`
 - `results/public/domain_retrieval_threshold_sweep.md`
+- `report/openlca_mcp_schema_drift_note.md`
+- `results/public/openlca_mcp_schema_drift.md`
+- `manifests/openlca_mcp_fastmcp_source_4865b2b.json`
+- `manifests/openlca_mcp_connector_visible_2026-07-26.json`
 
 ### Run DomainToolBench
 
@@ -273,6 +298,33 @@ python scripts\build_retrieval_threshold_sweep.py
 python scripts\run_tool_guard_stability_matrix.py
 python scripts\recompute_tool_guard_outcomes.py
 python scripts\build_tool_guard_stability_report.py
+```
+
+OpenLCA-MCP schema audit and benchmark generation:
+
+```powershell
+python scripts\export_openlca_mcp_source_manifest.py `
+  <openlca-mcp-source-root> `
+  manifests\openlca_mcp_source_4865b2b.json
+
+# Run with the OpenLCA-MCP source environment and checkout as cwd:
+python scripts\export_openlca_mcp_fastmcp_manifest.py `
+  manifests\openlca_mcp_fastmcp_source_4865b2b.json
+
+python scripts\export_openlca_mcp_connector_snapshot.py `
+  manifests\openlca_mcp_connector_visible_2026-07-26.json
+
+python scripts\compare_openlca_mcp_manifests.py `
+  manifests\openlca_mcp_fastmcp_source_4865b2b.json `
+  manifests\openlca_mcp_connector_visible_2026-07-26.json `
+  results\public\openlca_mcp_schema_drift.csv `
+  results\public\openlca_mcp_schema_drift.md `
+  manifests\openlca_mcp_schema_drift_summary.json
+
+python scripts\build_openlca_mcp_versioned_benchmarks.py `
+  manifests\openlca_mcp_fastmcp_source_4865b2b.json `
+  manifests\openlca_mcp_connector_visible_2026-07-26.json `
+  .
 ```
 
 ## Installation

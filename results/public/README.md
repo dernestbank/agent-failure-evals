@@ -26,6 +26,7 @@ This directory contains sanitized aggregate outputs from the approved v0.2.0 exp
 - `domain_tool_guard_stability_aggregate.csv` — model-policy means and stability metrics
 - `domain_tool_guard_stability_tasks.csv` — sanitized task-level proposal and guard outcomes
 - `domain_tool_guard_stability.md` — readable repeated-study summary
+- `openlca_mcp_schema_drift.csv` / `.md` — local-source versus connector-visible contract audit
 
 ## Excluded
 
@@ -53,4 +54,6 @@ The binary-gate stability study uses a separate eight-task balanced subset, thre
 
 The ToolCallGuard stability study uses the 15-task top-three retrieval set, three seeds, temperature 0.2, and deterministic paired transformations. The 0.60 retrieval threshold was selected post hoc on the current seed. Guard improvements describe filtering and validation, not improved model reasoning.
 
-All results are preliminary, not peer reviewed, and apply only to the tested prompts, model identifiers, providers, catalog conditions, and controlled tasks.
+The OpenLCA-MCP schema audit compares a local FastMCP-generated source manifest at commit `4865b2b` with the connector-visible schema captured on July 26, 2026. The connector health probe failed with HTTP 502, and no live behavior comparison was made. Source and connector manifests remain separate.
+
+All results are preliminary, not peer reviewed, and apply only to the tested prompts, model identifiers, providers, catalog conditions, schemas, and controlled tasks.

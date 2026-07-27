@@ -1,0 +1,781 @@
+{
+  "manifest_schema_version": "1.0",
+  "captured_at": "2026-07-27T00:01:57.712866+00:00",
+  "manifest_kind": "openlca_mcp_connector_visible",
+  "connector_name": "openlca-mcp",
+  "endpoint": "https://openlca-ipc-mcp.orchville.com/mcp",
+  "capture_provenance": "Tool schemas exposed to the active ChatGPT conversation by api_tool.list_resources(paths=['openlca-mcp']) on 2026-07-26.",
+  "direct_tools_list_fetch": "not_performed_due_execution_safety_boundary",
+  "deployed_version": null,
+  "tool_count": 24,
+  "tool_names": [
+    "analyze_contributions",
+    "calculate_impacts",
+    "compare_systems",
+    "create_process",
+    "create_product_flow",
+    "create_product_system",
+    "dispose_all_results",
+    "dispose_result",
+    "export_results",
+    "find_providers",
+    "get_contribution_tree",
+    "get_entity_by_name",
+    "get_inventory_results",
+    "get_normalized_impacts",
+    "get_sankey",
+    "get_total_requirements",
+    "get_weighted_impacts",
+    "health_check",
+    "run_monte_carlo",
+    "run_scenario_analysis",
+    "search_flows",
+    "search_impact_methods",
+    "search_processes",
+    "test_connection"
+  ],
+  "tools": [
+    {
+      "name": "analyze_contributions",
+      "description": "Identify the largest process or flow contributors to an impact category.",
+      "parameters": [
+        {
+          "name": "result_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "impact_category_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "n",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          },
+          "default": 10
+        },
+        {
+          "name": "contribution_type",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "process",
+              "flow"
+            ]
+          },
+          "default": "process"
+        },
+        {
+          "name": "min_share",
+          "required": false,
+          "schema": {
+            "type": "number"
+          },
+          "default": 0
+        }
+      ],
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state.",
+      "risk_class_provenance": "inferred from connector description and local source semantics"
+    },
+    {
+      "name": "calculate_impacts",
+      "description": "Calculate environmental impacts for a product system and return a result_id.",
+      "parameters": [
+        {
+          "name": "system_id",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "system_name",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "method_id",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "method_keywords",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "name": "amount",
+          "required": false,
+          "schema": {
+            "type": "number"
+          },
+          "default": 1
+        }
+      ],
+      "risk_class": "read_only_stateful_compute",
+      "operational_effect": "Creates or computes temporary analysis state.",
+      "risk_class_provenance": "inferred from connector description and local source semantics"
+    },
+    {
+      "name": "compare_systems",
+      "description": "Compare two product systems on the same impact method.",
+      "parameters": [
+        {
+          "name": "system1_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "system2_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "method_id",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "method_keywords",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "name": "amount",
+          "required": false,
+          "schema": {
+            "type": "number"
+          },
+          "default": 1
+        }
+      ],
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state.",
+      "risk_class_provenance": "inferred from connector description and local source semantics"
+    },
+    {
+      "name": "create_process",
+      "description": "Create a unit process with input and output exchanges.",
+      "parameters": [
+        {
+          "name": "name",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "description",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "exchanges",
+          "required": true,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "flow_id": {
+                  "type": "string"
+                },
+                "amount": {
+                  "type": "number"
+                },
+                "is_input": {
+                  "type": "boolean"
+                },
+                "is_quantitative_reference": {
+                  "type": "boolean"
+                },
+                "provider_id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "flow_id",
+                "amount",
+                "is_input"
+              ]
+            }
+          }
+        }
+      ],
+      "risk_class": "database_write",
+      "operational_effect": "Creates persistent entities in the openLCA database.",
+      "risk_class_provenance": "inferred from connector description and local source semantics"
+    },
+    {
+      "name": "create_product_flow",
+      "description": "Create a product flow using the Mass property and kg unit.",
+      "parameters": [
+        {
+          "name": "name",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "description",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "risk_class": "database_write",
+      "operational_effect": "Creates persistent entities in the openLCA database.",
+      "risk_class_provenance": "inferred from connector description and local source semantics"
+    },
+    {
+      "name": "create_product_system",
+      "description": "Create a product system from a root process.",
+      "parameters": [
+        {
+          "name": "process_id",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "process_name",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "risk_class": "database_write",
+      "operational_effect": "Creates persistent entities in the openLCA database.",
+      "risk_class_provenance": "inferred from connector description and local source semantics"
+    },
+    {
+      "name": "dispose_all_results",
+      "description": "Dispose every tracked calculation result.",
+      "parameters": [],
+      "risk_class": "result_store_cleanup",
+      "operational_effect": "Deletes temporary calculation results from server memory.",
+      "risk_class_provenance": "inferred from connector description and local source semantics"
+    },
+    {
+      "name": "dispose_result",
+      "description": "Dispose one calculation result to free server memory.",
+      "parameters": [
+        {
+          "name": "result_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "risk_class": "result_store_cleanup",
+      "operational_effect": "Deletes temporary calculation results from server memory.",
+      "risk_class_provenance": "inferred from connector description and local source semantics"
+    },
+    {
+      "name": "export_results",
+      "description": "Export impact or comparison results to CSV or Excel on the server host.",
+      "parameters": [
+        {
+          "name": "result_id",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "data",
+          "required": false,
+          "schema": {
+            "type": "object"
+          }
+        },
+        {
+          "name": "kind",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "impacts",
+              "comparison"
+            ]
+          },
+          "default": "impacts"
+        },
+        {
+          "name": "filepath",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "format",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "csv",
+              "excel"
+            ]
+          },
+          "default": "csv"
+        }
+      ],
+      "risk_class": "file_write",
+      "operational_effect": "Writes a result file on the server host.",
+      "risk_class_provenance": "inferred from connector description and local source semantics"
+    },
+    {
+      "name": "find_providers",
+      "description": "Find processes that produce a given flow.",
+      "parameters": [
+        {
+          "name": "flow_id",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "flow_name",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state.",
+      "risk_class_provenance": "inferred from connector description and local source semantics"
+    },
+    {
+      "name": "get_contribution_tree",
+      "description": "Build an upstream process contribution tree for an impact category.",
+      "parameters": [
+        {
+          "name": "result_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "impact_category_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "max_depth",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          },
+          "default": 3
+        },
+        {
+          "name": "min_share",
+          "required": false,
+          "schema": {
+            "type": "number"
+          },
+          "default": 0.01
+        }
+      ],
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state.",
+      "risk_class_provenance": "inferred from connector description and local source semantics"
+    },
+    {
+      "name": "get_entity_by_name",
+      "description": "Look up one entity by exact name.",
+      "parameters": [
+        {
+          "name": "model_type",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "Flow",
+              "Process",
+              "ImpactMethod",
+              "ProductSystem",
+              "FlowProperty",
+              "Unit"
+            ]
+          }
+        },
+        {
+          "name": "name",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state.",
+      "risk_class_provenance": "inferred from connector description and local source semantics"
+    },
+    {
+      "name": "get_inventory_results",
+      "description": "Get life-cycle inventory flows for a calculation result.",
+      "parameters": [
+        {
+          "name": "result_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "direction",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "input",
+              "output",
+              "both"
+            ]
+          },
+          "default": "both"
+        }
+      ],
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state.",
+      "risk_class_provenance": "inferred from connector description and local source semantics"
+    },
+    {
+      "name": "get_normalized_impacts",
+      "description": "Get normalized impact results for a calculation result.",
+      "parameters": [
+        {
+          "name": "result_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state.",
+      "risk_class_provenance": "inferred from connector description and local source semantics"
+    },
+    {
+      "name": "get_sankey",
+      "description": "Get Sankey graph data for an impact category.",
+      "parameters": [
+        {
+          "name": "result_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "impact_category_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "max_nodes",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          },
+          "default": 50
+        },
+        {
+          "name": "min_share",
+          "required": false,
+          "schema": {
+            "type": "number"
+          },
+          "default": 0
+        }
+      ],
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state.",
+      "risk_class_provenance": "inferred from connector description and local source semantics"
+    },
+    {
+      "name": "get_total_requirements",
+      "description": "Get scaled technology requirements for a calculated system.",
+      "parameters": [
+        {
+          "name": "result_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state.",
+      "risk_class_provenance": "inferred from connector description and local source semantics"
+    },
+    {
+      "name": "get_weighted_impacts",
+      "description": "Get weighted impact results after normalization and weighting.",
+      "parameters": [
+        {
+          "name": "result_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state.",
+      "risk_class_provenance": "inferred from connector description and local source semantics"
+    },
+    {
+      "name": "health_check",
+      "description": "Probe openLCA reachability and optionally count database entities.",
+      "parameters": [
+        {
+          "name": "count_entities",
+          "required": false,
+          "schema": {
+            "type": "boolean"
+          },
+          "default": true
+        }
+      ],
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state.",
+      "risk_class_provenance": "inferred from connector description and local source semantics"
+    },
+    {
+      "name": "run_monte_carlo",
+      "description": "Run Monte Carlo uncertainty analysis for a product system.",
+      "parameters": [
+        {
+          "name": "system_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "method_id",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "method_keywords",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "name": "iterations",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          },
+          "default": 100
+        }
+      ],
+      "risk_class": "read_only_stateful_compute",
+      "operational_effect": "Creates or computes temporary analysis state.",
+      "risk_class_provenance": "inferred from connector description and local source semantics"
+    },
+    {
+      "name": "run_scenario_analysis",
+      "description": "Vary one parameter over multiple values and report impacts.",
+      "parameters": [
+        {
+          "name": "system_id",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "method_id",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "method_keywords",
+          "required": false,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "name": "parameter_name",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "values",
+          "required": true,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
+        }
+      ],
+      "risk_class": "read_only_stateful_compute",
+      "operational_effect": "Creates or computes temporary analysis state.",
+      "risk_class_provenance": "inferred from connector description and local source semantics"
+    },
+    {
+      "name": "search_flows",
+      "description": "Search material flows using case-insensitive partial keyword matching.",
+      "parameters": [
+        {
+          "name": "keywords",
+          "required": true,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "name": "max_results",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          },
+          "default": 10
+        },
+        {
+          "name": "flow_type",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": [
+              "PRODUCT_FLOW",
+              "ELEMENTARY_FLOW",
+              "WASTE_FLOW"
+            ]
+          }
+        }
+      ],
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state.",
+      "risk_class_provenance": "inferred from connector description and local source semantics"
+    },
+    {
+      "name": "search_impact_methods",
+      "description": "Search LCIA methods and return impact categories.",
+      "parameters": [
+        {
+          "name": "keywords",
+          "required": true,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      ],
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state.",
+      "risk_class_provenance": "inferred from connector description and local source semantics"
+    },
+    {
+      "name": "search_processes",
+      "description": "Search processes using case-insensitive partial keyword matching.",
+      "parameters": [
+        {
+          "name": "keywords",
+          "required": true,
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "name": "max_results",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          },
+          "default": 10
+        }
+      ],
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state.",
+      "risk_class_provenance": "inferred from connector description and local source semantics"
+    },
+    {
+      "name": "test_connection",
+      "description": "Test the openLCA IPC connection.",
+      "parameters": [],
+      "risk_class": "read_only",
+      "operational_effect": "Queries data or reads existing calculation state.",
+      "risk_class_provenance": "inferred from connector description and local source semantics"
+    }
+  ],
+  "execution_status": {
+    "health_probe": "failed",
+    "health_probe_error": "HTTP 502 upstream or external service error",
+    "schema_available": true,
+    "live_openlca_execution": false
+  }
+}

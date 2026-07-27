@@ -192,6 +192,53 @@ def main() -> None:
             "author_review_required_before_external_dataset_release"
         ),
     }
+    drift_summary = json.loads(
+        (ROOT / "manifests" / "openlca_mcp_schema_drift_summary.json").read_text(encoding="utf-8")
+    )
+    source_common_tasks = sum(
+        bool(line.strip())
+        for line in (ROOT / "tasks" / "domain_tool_calling_openlca_source_v0.jsonl")
+        .read_text(encoding="utf-8")
+        .splitlines()
+    )
+    connector_common_tasks = sum(
+        bool(line.strip())
+        for line in (ROOT / "tasks" / "domain_tool_calling_openlca_connector_v0.jsonl")
+        .read_text(encoding="utf-8")
+        .splitlines()
+    )
+    source_extension_tasks = sum(
+        bool(line.strip())
+        for line in (ROOT / "tasks" / "domain_tool_calling_openlca_source_extension_v0.jsonl")
+        .read_text(encoding="utf-8")
+        .splitlines()
+    )
+    manifest["openlca_mcp_schema_audit"] = {
+        "local_source_commit": drift_summary["source_commit"],
+        "local_source_tool_count": drift_summary["source_tool_count"],
+        "connector_visible_tool_count": drift_summary["connector_tool_count"],
+        "shared_tool_count": drift_summary["shared_tool_count"],
+        "source_only_tools": drift_summary["source_only_tools"],
+        "connector_only_tools": drift_summary["connector_only_tools"],
+        "hidden_connection_parameter_tools": drift_summary[
+            "tools_with_hidden_connection_parameter"
+        ],
+        "shared_parameter_name_drift_tools": drift_summary[
+            "tools_with_client_parameter_name_drift"
+        ],
+        "schema_constraint_drift_tools": drift_summary["tools_with_schema_constraint_drift"],
+        "local_package_version_pyproject": drift_summary["source_package_version_pyproject"],
+        "local_runtime_version_module": drift_summary["source_runtime_version_module"],
+        "local_version_consistent": drift_summary["source_version_consistent"],
+        "connector_deployed_version": drift_summary["connector_deployed_version"],
+        "connector_health": drift_summary["connector_health"],
+        "common_schema_pinned_tasks_per_surface": source_common_tasks,
+        "connector_common_tasks": connector_common_tasks,
+        "source_only_extension_tasks": source_extension_tasks,
+        "model_comparison_status": (
+            "not_run_exact_deployed_descriptions_and_live_backend_unavailable"
+        ),
+    }
     manifest["public_reports"] = [
         "report/technical_report_v0_1.md",
         "report/domain_toolbench_technical_report_v0_1.md",
@@ -199,6 +246,7 @@ def main() -> None:
         "report/engineering_note_structured_outputs.md",
         "report/binary_call_gate_stability_note.md",
         "report/deterministic_tool_call_guard_note.md",
+        "report/openlca_mcp_schema_drift_note.md",
     ]
     MANIFEST_PATH.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(

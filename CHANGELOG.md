@@ -28,6 +28,10 @@ All notable changes to this project are documented here.
 - Exploratory no-tool retrieval threshold sweep
 - Three-seed ToolCallGuard stability runner and public aggregate reports
 - Deterministic ToolCallGuard technical note
+- Versioned local FastMCP and connector-visible OpenLCA-MCP manifests
+- Source-to-connector schema drift comparison and technical note
+- Paired 20-task OpenLCA source and connector schema benchmarks
+- Three source-only `check_result_consistency` extension tasks
 - Surgical DomainToolBench task-repair utility and repair log
 
 ### Results
@@ -48,6 +52,9 @@ All notable changes to this project are documented here.
 - ToolCallGuard sanitization preserved 100% of already exact proposals and captured 100% of unsafe proposals across 135 fresh proposals
 - Sanitization increased exact-call accuracy to 93.3% for Qwen 3, 93.3% for Gemma 3, and 73.3% for Qwen Coder 1.5B
 - Safe no-call accuracy reached 100% and false tool calls fell to zero for all three guard-study models
+- Local OpenLCA-MCP source exposes 25 tools versus 24 connector-visible tools
+- `check_result_consistency` is source-only, while `create_product_system` adds three local client-visible parameters
+- Six shared OpenLCA tools differ in schema constraints and local version metadata disagrees between 0.4.1 and 0.4.0
 
 ### Changed
 
@@ -61,6 +68,7 @@ All notable changes to this project are documented here.
 - Experiment summaries now report the actual task count and identify hierarchical binary-gate conditions
 - Guard sanitization now blocks calls when explicitly requested values are invalid instead of deleting them and executing defaults
 - Grounded numeric strings and number words can be canonically converted to schema-compatible numeric values
+- Domain tool-calling tasks can now record manifest identity, commit, schema source, and execution mode
 
 ### Fixed
 
@@ -72,7 +80,9 @@ All notable changes to this project are documented here.
 ### Planned
 
 - Held-out no-tool threshold calibration and multi-tool-aware retrieval
-- Live versioned MCP schema and sandbox-execution validation
+- Fresh authenticated deployed OpenLCA `tools/list` capture
+- Paired source-versus-deployed schema model evaluation
+- Live versioned MCP sandbox-execution validation
 - Class-balanced supervised behavior adapter and calibrated fallback
 - Deterministic EvidenceGuard condition
 - Benchmark v1.1 annotation clarifications

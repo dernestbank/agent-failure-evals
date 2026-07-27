@@ -61,6 +61,7 @@
 - [x] Commit and push behavior-router milestone (`083e602`)
 - [x] Commit and push binary-gate stability milestone (`e16a678`)
 - [x] Commit and push deterministic ToolCallGuard milestone (`0ce2c40`)
+- [x] Commit and push OpenLCA-MCP schema audit milestone (`5e4d16c`)
 - [ ] Review GitHub rendering and links
 - [ ] Tag v0.2.0 only after human confirmation
 
